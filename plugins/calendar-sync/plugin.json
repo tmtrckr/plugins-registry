@@ -1,0 +1,19 @@
+{
+  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "id": "calendar-sync",
+  "name": "Calendar Sync",
+  "author": "Developer Name",
+  "repository": "https://github.com/user/calendar-sync-plugin",
+  "latest_version": "1.0.0",
+  "description": "Sync time entries with Google Calendar, Outlook, and Apple Calendar. Automatically creates calendar events from tracked activities and allows two-way synchronization.",
+  "category": "integration",
+  "verified": false,
+  "downloads": 0,
+  "tags": ["calendar", "sync", "google", "outlook", "apple"],
+  "icon": "https://raw.githubusercontent.com/user/calendar-sync-plugin/main/icon.png",
+  "homepage": "https://github.com/user/calendar-sync-plugin",
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}
