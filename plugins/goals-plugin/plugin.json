@@ -1,0 +1,16 @@
+{
+  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "id": "goals-plugin",
+  "name": "Goals",
+  "author": "TimeTracker",
+  "repository": "https://github.com/bthos/time-tracker-goals-plugin",
+  "latest_version": "1.0.0",
+  "description": "Goal tracking plugin. Create and manage goals, track goal progress, set goals by category or project, and receive goal alerts and notifications.",
+  "category": "productivity",
+  "verified": true,
+  "downloads": 0,
+  "tags": ["goals", "tracking", "progress", "productivity"],
+  "license": "MIT",
+  "min_core_version": "0.2.7",
+  "api_version": "1.0"
+}

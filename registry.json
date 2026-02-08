@@ -1,6 +1,116 @@
 {
   "$schema": "./registry.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-02-08T00:00:00Z",
-  "plugins": []
+  "last_updated": "2026-02-08T01:13:33.092Z",
+  "plugins": [
+    {
+      "$schema": "../../registry.schema.json#/properties/plugins/items",
+      "id": "billing-plugin",
+      "name": "Billing",
+      "author": "TimeTracker",
+      "repository": "https://github.com/bthos/time-tracker-billing-plugin",
+      "latest_version": "1.0.0",
+      "description": "Billable time tracking plugin. Mark categories as billable, set hourly rates, and calculate billable hours and revenue across projects.",
+      "category": "productivity",
+      "verified": true,
+      "downloads": 0,
+      "tags": [
+        "billing",
+        "revenue",
+        "hourly-rate",
+        "billable"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.2.7",
+      "api_version": "1.0"
+    },
+    {
+      "$schema": "../../registry.schema.json#/properties/plugins/items",
+      "id": "calendar-sync",
+      "name": "Calendar Sync",
+      "author": "Developer Name",
+      "repository": "https://github.com/user/calendar-sync-plugin",
+      "latest_version": "1.0.0",
+      "description": "Sync time entries with Google Calendar, Outlook, and Apple Calendar. Automatically creates calendar events from tracked activities and allows two-way synchronization.",
+      "category": "integration",
+      "verified": false,
+      "downloads": 0,
+      "tags": [
+        "calendar",
+        "sync",
+        "google",
+        "outlook",
+        "apple"
+      ],
+      "icon": "https://raw.githubusercontent.com/user/calendar-sync-plugin/main/icon.png",
+      "homepage": "https://github.com/user/calendar-sync-plugin",
+      "license": "MIT",
+      "min_core_version": "0.3.0",
+      "max_core_version": "1.0.0",
+      "api_version": "1.0"
+    },
+    {
+      "$schema": "../../registry.schema.json#/properties/plugins/items",
+      "id": "goals-plugin",
+      "name": "Goals",
+      "author": "TimeTracker",
+      "repository": "https://github.com/bthos/time-tracker-goals-plugin",
+      "latest_version": "1.0.0",
+      "description": "Goal tracking plugin. Create and manage goals, track goal progress, set goals by category or project, and receive goal alerts and notifications.",
+      "category": "productivity",
+      "verified": true,
+      "downloads": 0,
+      "tags": [
+        "goals",
+        "tracking",
+        "progress",
+        "productivity"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.2.7",
+      "api_version": "1.0"
+    },
+    {
+      "$schema": "../../registry.schema.json#/properties/plugins/items",
+      "id": "pomodoro-plugin",
+      "name": "Pomodoro",
+      "author": "TimeTracker",
+      "repository": "https://github.com/bthos/time-tracker-pomodoro-plugin",
+      "latest_version": "1.0.0",
+      "description": "Pomodoro timer plugin. Start and track Pomodoro sessions (work, short break, long break), view focus session history, and integrate with projects and tasks.",
+      "category": "productivity",
+      "verified": true,
+      "downloads": 0,
+      "tags": [
+        "pomodoro",
+        "timer",
+        "focus",
+        "productivity"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.2.7",
+      "api_version": "1.0"
+    },
+    {
+      "$schema": "../../registry.schema.json#/properties/plugins/items",
+      "id": "projects-tasks-plugin",
+      "name": "Projects/Tasks",
+      "author": "TimeTracker",
+      "repository": "https://github.com/bthos/time-tracker-projects-tasks-plugin",
+      "latest_version": "1.0.0",
+      "description": "Project and task management plugin. Create and manage projects, organize tasks within projects, and link activities to projects and tasks for better time tracking organization.",
+      "category": "productivity",
+      "verified": true,
+      "downloads": 0,
+      "tags": [
+        "projects",
+        "tasks",
+        "organization",
+        "productivity"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.2.7",
+      "api_version": "1.0"
+    }
+  ]
 }

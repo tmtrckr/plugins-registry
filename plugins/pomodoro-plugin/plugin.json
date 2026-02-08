@@ -1,0 +1,16 @@
+{
+  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "id": "pomodoro-plugin",
+  "name": "Pomodoro",
+  "author": "TimeTracker",
+  "repository": "https://github.com/bthos/time-tracker-pomodoro-plugin",
+  "latest_version": "1.0.0",
+  "description": "Pomodoro timer plugin. Start and track Pomodoro sessions (work, short break, long break), view focus session history, and integrate with projects and tasks.",
+  "category": "productivity",
+  "verified": true,
+  "downloads": 0,
+  "tags": ["pomodoro", "timer", "focus", "productivity"],
+  "license": "MIT",
+  "min_core_version": "0.2.7",
+  "api_version": "1.0"
+}

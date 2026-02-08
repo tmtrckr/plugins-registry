@@ -1,0 +1,16 @@
+{
+  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "id": "projects-tasks-plugin",
+  "name": "Projects/Tasks",
+  "author": "TimeTracker",
+  "repository": "https://github.com/bthos/time-tracker-projects-tasks-plugin",
+  "latest_version": "1.0.0",
+  "description": "Project and task management plugin. Create and manage projects, organize tasks within projects, and link activities to projects and tasks for better time tracking organization.",
+  "category": "productivity",
+  "verified": true,
+  "downloads": 0,
+  "tags": ["projects", "tasks", "organization", "productivity"],
+  "license": "MIT",
+  "min_core_version": "0.2.7",
+  "api_version": "1.0"
+}
