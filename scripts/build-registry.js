@@ -29,39 +29,74 @@ try {
     process.exit(0);
   }
 
-  // Read all plugin directories
-  const entries = fs.readdirSync(pluginsDir, { withFileTypes: true });
-  const pluginDirs = entries
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name)
-    .filter(name => !name.startsWith('.')); // Ignore hidden directories
-  
-  const plugins = [];
-  const errors = [];
-  
-  // Load each plugin.json
-  for (const pluginDir of pluginDirs) {
-    const pluginJsonPath = path.join(pluginsDir, pluginDir, 'plugin.json');
+  // Normalize author name for directory matching
+  function normalizeAuthorName(author) {
+    return author.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9_-]/g, '');
+  }
+
+  // Recursively find plugins in plugins/{author}/{plugin-id}/plugin.json structure
+  function findPlugins(dir, authorPath = '') {
+    const plugins = [];
+    const errors = [];
     
-    if (!fs.existsSync(pluginJsonPath)) {
-      errors.push(`Missing plugin.json in ${pluginDir}/`);
-      continue;
+    if (!fs.existsSync(dir)) {
+      return { plugins, errors };
     }
     
-    try {
-      const pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
-      
-      // Validate that id matches directory name
-      if (pluginData.id !== pluginDir) {
-        errors.push(`Plugin ID "${pluginData.id}" in ${pluginDir}/plugin.json doesn't match directory name`);
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith('.')) {
         continue;
       }
       
-      plugins.push(pluginData);
-    } catch (error) {
-      errors.push(`Error parsing ${pluginDir}/plugin.json: ${error.message}`);
+      const fullPath = path.join(dir, entry.name);
+      const pluginJsonPath = path.join(fullPath, 'plugin.json');
+      
+      if (fs.existsSync(pluginJsonPath)) {
+        // This is a plugin directory
+        try {
+          const pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
+          
+          // Validate that id matches directory name
+          if (pluginData.id !== entry.name) {
+            errors.push(`Plugin ID "${pluginData.id}" in ${authorPath ? authorPath + '/' : ''}${entry.name}/plugin.json doesn't match directory name`);
+            continue;
+          }
+          
+          // Validate that author is present
+          if (!pluginData.author || pluginData.author.trim() === '') {
+            errors.push(`Plugin "${pluginData.id}" is missing required "author" field`);
+            continue;
+          }
+          
+          // Validate that author matches directory structure
+          if (authorPath) {
+            const normalizedAuthor = normalizeAuthorName(pluginData.author);
+            if (normalizedAuthor !== authorPath) {
+              errors.push(`Plugin "${pluginData.id}" author "${pluginData.author}" (normalized: "${normalizedAuthor}") doesn't match directory author "${authorPath}"`);
+              continue;
+            }
+          }
+          
+          plugins.push(pluginData);
+        } catch (error) {
+          errors.push(`Error parsing ${authorPath ? authorPath + '/' : ''}${entry.name}/plugin.json: ${error.message}`);
+        }
+      } else {
+        // This might be an author directory - recurse into it
+        const result = findPlugins(fullPath, entry.name);
+        plugins.push(...result.plugins);
+        errors.push(...result.errors);
+      }
     }
+    
+    return { plugins, errors };
   }
+  
+  const { plugins, errors } = findPlugins(pluginsDir);
   
   if (errors.length > 0) {
     console.error('❌ Errors found:');

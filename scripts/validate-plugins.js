@@ -26,62 +26,96 @@ try {
     ...fullSchema.properties.plugins.items
   };
   
+  // Normalize author name for directory matching
+  function normalizeAuthorName(author) {
+    return author.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9_-]/g, '');
+  }
+
   const ajv = new Ajv({ allErrors: true });
   addFormats(ajv);
   const validate = ajv.compile(pluginSchema);
   
-  // Read all plugin directories
-  const entries = fs.readdirSync(pluginsDir, { withFileTypes: true });
-  const pluginDirs = entries
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name)
-    .filter(name => !name.startsWith('.')); // Ignore hidden directories
-  
-  if (pluginDirs.length === 0) {
-    console.log('ℹ️  No plugins found in plugins/ directory');
-    process.exit(0);
-  }
-  
-  let errors = 0;
-  let validated = 0;
-  
-  for (const pluginDir of pluginDirs) {
-    const pluginJsonPath = path.join(pluginsDir, pluginDir, 'plugin.json');
+  // Recursively find and validate plugins in plugins/{author}/{plugin-id}/plugin.json structure
+  function validatePlugins(dir, authorPath = '') {
+    let errors = 0;
+    let validated = 0;
     
-    if (!fs.existsSync(pluginJsonPath)) {
-      console.error(`❌ ${pluginDir}/: Missing plugin.json`);
-      errors++;
-      continue;
+    if (!fs.existsSync(dir)) {
+      return { errors, validated };
     }
     
-    try {
-      const pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
-      
-      // Check ID matches directory
-      if (pluginData.id !== pluginDir) {
-        console.error(`❌ ${pluginDir}/: ID "${pluginData.id}" doesn't match directory name`);
-        errors++;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith('.')) {
         continue;
       }
       
-      // Validate schema
-      const valid = validate(pluginData);
-      if (!valid) {
-        console.error(`❌ ${pluginDir}/plugin.json: Validation failed`);
-        validate.errors.forEach(err => {
-          const path = err.instancePath || err.schemaPath || 'root';
-          console.error(`   - ${path}: ${err.message}`);
-        });
-        errors++;
+      const fullPath = path.join(dir, entry.name);
+      const pluginJsonPath = path.join(fullPath, 'plugin.json');
+      
+      if (fs.existsSync(pluginJsonPath)) {
+        // This is a plugin directory
+        const pluginPath = authorPath ? `${authorPath}/${entry.name}` : entry.name;
+        
+        try {
+          const pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
+          
+          // Check ID matches directory name
+          if (pluginData.id !== entry.name) {
+            console.error(`❌ ${pluginPath}/: ID "${pluginData.id}" doesn't match directory name`);
+            errors++;
+            continue;
+          }
+          
+          // Validate that author is present
+          if (!pluginData.author || pluginData.author.trim() === '') {
+            console.error(`❌ ${pluginPath}/plugin.json: Missing required "author" field`);
+            errors++;
+            continue;
+          }
+          
+          // Validate that author matches directory structure
+          if (authorPath) {
+            const normalizedAuthor = normalizeAuthorName(pluginData.author);
+            if (normalizedAuthor !== authorPath) {
+              console.error(`❌ ${pluginPath}/plugin.json: Author "${pluginData.author}" (normalized: "${normalizedAuthor}") doesn't match directory author "${authorPath}"`);
+              errors++;
+              continue;
+            }
+          }
+          
+          // Validate schema
+          const valid = validate(pluginData);
+          if (!valid) {
+            console.error(`❌ ${pluginPath}/plugin.json: Schema validation failed`);
+            validate.errors.forEach(err => {
+              const errPath = err.instancePath || err.schemaPath || 'root';
+              console.error(`   - ${errPath}: ${err.message}`);
+            });
+            errors++;
+          } else {
+            console.log(`✅ ${pluginPath}/plugin.json`);
+            validated++;
+          }
+        } catch (error) {
+          console.error(`❌ ${pluginPath}/plugin.json: ${error.message}`);
+          errors++;
+        }
       } else {
-        console.log(`✅ ${pluginDir}/plugin.json`);
-        validated++;
+        // This might be an author directory - recurse into it
+        const result = validatePlugins(fullPath, entry.name);
+        errors += result.errors;
+        validated += result.validated;
       }
-    } catch (error) {
-      console.error(`❌ ${pluginDir}/plugin.json: ${error.message}`);
-      errors++;
     }
+    
+    return { errors, validated };
   }
+  
+  const { errors, validated } = validatePlugins(pluginsDir);
   
   console.log(`\n📊 Validation summary: ${validated} passed, ${errors} failed`);
   
@@ -89,7 +123,7 @@ try {
     process.exit(1);
   }
   
-  console.log(`\n✅ All ${pluginDirs.length} plugin(s) validated successfully!`);
+  console.log(`\n✅ All ${validated} plugin(s) validated successfully!`);
   process.exit(0);
 } catch (error) {
   console.error('❌ Error validating plugins:', error.message);

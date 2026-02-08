@@ -15,17 +15,29 @@ The registry uses a **folder-based structure** where each plugin has its own dir
 
 ### Folder Structure
 
-Each plugin has its own directory in `plugins/`:
+Plugins are organized by author in `plugins/`:
 
 ```
 plugins/
-├── calendar-sync/
-│   ├── plugin.json          # Plugin metadata
-│   ├── icon.png             # Optional: Plugin icon
-│   └── README.md            # Optional: Extended documentation
-└── [other-plugins]/
-    └── plugin.json
+├── TimeTracker/                    # Author directory (normalized author name)
+│   ├── pomodoro-plugin/
+│   │   ├── plugin.json            # Plugin metadata
+│   │   ├── icon.png               # Optional: Plugin icon
+│   │   └── README.md              # Optional: Extended documentation
+│   └── billing-plugin/
+│       └── plugin.json
+├── OtherAuthor/                    # Another author
+│   └── other-plugin/
+│       └── plugin.json
+└── [other-authors]/
+    └── [plugins]/
+        └── plugin.json
 ```
+
+**Important**: 
+- Author directory name must match the normalized author name from `plugin.json` (lowercase, spaces replaced with hyphens, special characters removed)
+- Plugin directory name must match the `id` field in `plugin.json`
+- The `author` field in `plugin.json` is **required** and must match the author directory name when normalized
 
 The `registry.json` file is automatically generated from these individual plugin files using `npm run build`.
 
@@ -55,18 +67,28 @@ Each plugin's `plugin.json` follows the schema defined in `registry.schema.json`
 To add your plugin to the registry:
 
 1. **Fork this repository**
-2. **Create a new directory** in `plugins/` named after your plugin ID (e.g., `plugins/my-plugin/`)
-3. **Create `plugin.json`** in that directory with your plugin metadata
-4. **Ensure the `id` field matches the directory name**
-5. **Run `npm run build`** to regenerate `registry.json` (or let CI do it)
-6. **Submit a pull request** with:
+2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
+   - Example: "John Doe" → "john-doe"
+   - Example: "My Company" → "my-company"
+3. **Create author directory** if it doesn't exist: `plugins/{normalized-author}/`
+4. **Create plugin directory** in the author directory: `plugins/{normalized-author}/{plugin-id}/`
+5. **Create `plugin.json`** in the plugin directory with your plugin metadata
+6. **Ensure**:
+   - The `id` field matches the plugin directory name
+   - The `author` field matches the author directory name when normalized
+   - The `author` field is **required** and cannot be empty
+7. **Run `npm run build`** to regenerate `registry.json` (or let CI do it)
+8. **Submit a pull request** with:
+   - Author directory (if new)
    - Plugin directory and `plugin.json` file
    - Link to your GitHub repository
    - Brief description
 
-**Example**: To add a plugin called "jira-integration":
-- Create `plugins/jira-integration/plugin.json`
-- Set `"id": "jira-integration"` in the JSON file
+**Example**: To add a plugin called "jira-integration" by author "John Doe":
+- Normalize author: "John Doe" → "john-doe"
+- Create `plugins/john-doe/jira-integration/plugin.json`
+- Set `"id": "jira-integration"` and `"author": "John Doe"` in the JSON file
+- The normalized author name "john-doe" must match the directory name
 
 ### Plugin Requirements
 
@@ -77,8 +99,20 @@ To add your plugin to the registry:
 
 ### Example Plugin Entry
 
+For a plugin with author "Developer Name" and ID "calendar-sync":
+
+**Directory structure:**
+```
+plugins/
+  developer-name/          # Normalized author name
+    calendar-sync/         # Plugin ID
+      plugin.json
+```
+
+**plugin.json:**
 ```json
 {
+  "$schema": "../../registry.schema.json#/properties/plugins/items",
   "id": "calendar-sync",
   "name": "Calendar Sync",
   "author": "Developer Name",
@@ -96,13 +130,17 @@ To add your plugin to the registry:
 }
 ```
 
+**Note**: The `author` field "Developer Name" normalizes to "developer-name", which must match the author directory name.
+
 ## Registry Validation
 
 The registry is validated against `registry.schema.json` to ensure:
 
-- All required fields are present
+- All required fields are present (including `author`)
 - Field formats are correct (URLs, versions, etc.)
-- No duplicate plugin IDs
+- No duplicate `{author}/{plugin-id}` combinations
+- Author directory name matches normalized author name from `plugin.json`
+- Plugin directory name matches `id` field in `plugin.json`
 - Repository URLs are valid GitHub repositories
 
 ## Verification Process

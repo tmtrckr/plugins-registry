@@ -27,12 +27,22 @@ Before submitting your plugin to the registry, ensure:
 
 1. **Fork this repository**
 
-2. **Create a new directory** in `plugins/` named after your plugin ID:
+2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
+   - Example: "John Doe" → "john-doe"
+   - Example: "My Company" → "my-company"
+   - Example: "TimeTracker" → "timetracker"
+
+3. **Create author directory** if it doesn't exist:
    ```bash
-   mkdir plugins/your-plugin-id
+   mkdir -p plugins/your-normalized-author-name
    ```
 
-3. **Create `plugin.json`** in that directory with your plugin metadata:
+4. **Create plugin directory** in the author directory:
+   ```bash
+   mkdir plugins/your-normalized-author-name/your-plugin-id
+   ```
+
+5. **Create `plugin.json`** in the plugin directory with your plugin metadata:
 
 ```json
 {
@@ -54,13 +64,16 @@ Before submitting your plugin to the registry, ensure:
 }
 ```
 
-**Important**: The `id` field must match the directory name exactly.
+**Important**: 
+- The `id` field must match the plugin directory name exactly
+- The `author` field is **required** and must match the author directory name when normalized
+- Author name normalization: lowercase, spaces → hyphens, special characters removed
 
 **Field Guidelines:**
 
 - **id**: Lowercase, alphanumeric with hyphens only (e.g., `calendar-sync`, `jira-integration`)
 - **name**: Display name (max 100 characters)
-- **author**: Your name or organization
+- **author**: Your name or organization (required, will be normalized for directory structure)
 - **repository**: Full GitHub URL (must be valid)
 - **latest_version**: Latest release version (semver format)
 - **description**: 10-500 characters, clear and concise
@@ -77,10 +90,12 @@ Before submitting, validate your entry:
 
 1. **Check JSON syntax**: Ensure valid JSON
 2. **Validate against schema**: Your entry must match `registry.schema.json`
-3. **Verify ID matches directory**: The `id` field must match the directory name
-4. **Verify repository URL**: Ensure the GitHub repository exists and is accessible
-5. **Check for duplicates**: Ensure no other plugin has the same `id`
-6. **Build and validate**: Run `npm run build && npm run validate` to ensure everything works
+3. **Verify ID matches directory**: The `id` field must match the plugin directory name
+4. **Verify author matches directory**: The `author` field (when normalized) must match the author directory name
+5. **Verify author is present**: The `author` field is required and cannot be empty
+6. **Verify repository URL**: Ensure the GitHub repository exists and is accessible
+7. **Check for duplicates**: Ensure no other plugin has the same `{author}/{id}` combination
+8. **Build and validate**: Run `npm run build && npm run validate` to ensure everything works
 
 ### Step 4: Submit Pull Request
 
@@ -91,7 +106,7 @@ Before submitting, validate your entry:
 
 2. **Commit your changes:**
    ```bash
-   git add plugins/your-plugin-id/plugin.json
+   git add plugins/your-normalized-author-name/your-plugin-id/plugin.json
    git add registry.json  # If you built it locally
    git commit -m "Add plugin: your-plugin-name"
    ```
@@ -119,11 +134,12 @@ Before submitting, validate your entry:
 
 To update your plugin entry:
 
-1. Edit `plugin.json` in your plugin's directory (e.g., `plugins/your-plugin-id/plugin.json`)
+1. Edit `plugin.json` in your plugin's directory (e.g., `plugins/{author}/{plugin-id}/plugin.json`)
 2. Update `latest_version` if you've released a new version
 3. Update `description`, `tags`, or other fields as needed
-4. Run `npm run build` to regenerate `registry.json` (or let CI do it)
-5. Submit a pull request with changes
+4. **Note**: Do not change the `author` field or move the plugin to a different author directory without coordination
+5. Run `npm run build` to regenerate `registry.json` (or let CI do it)
+6. Submit a pull request with changes
 
 ## Plugin Verification
 
