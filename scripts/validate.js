@@ -17,18 +17,17 @@ try {
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
-  // Validate - Ajv v8 supports Draft 2020-12 by default
-  // Remove $schema from schema to avoid reference issues
-  const schemaToValidate = { ...schema };
-  delete schemaToValidate.$schema;
-  delete schemaToValidate.$id;
-  
+  // Validate
   const ajv = new Ajv({ 
     allErrors: true,
-    strict: false,
-    validateSchema: false  // Skip schema validation itself
+    strict: false  // Allow Draft 2020-12 features
   });
   addFormats(ajv);
+  
+  // Remove $schema from schema before validation (it's metadata, not part of validation)
+  const schemaToValidate = { ...schema };
+  delete schemaToValidate.$schema;
+  
   const validate = ajv.compile(schemaToValidate);
 
   const valid = validate(registry);
