@@ -15,7 +15,7 @@ try {
   const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
   const seen = new Set();
   const duplicates = new Set();
-  
+
   for (const aid of authorIds) {
     if (seen.has(aid)) {
       duplicates.add(aid);
@@ -23,10 +23,9 @@ try {
       seen.add(aid);
     }
   }
-  
+
   if (duplicates.size > 0) {
     console.error('❌ Duplicate plugin author+id combinations found:');
-    // Build a map of author+id to plugins for efficient lookup
     const pluginsByAuthorId = new Map();
     registry.plugins.forEach(p => {
       const aid = p.author + '/' + p.id;
@@ -35,8 +34,7 @@ try {
       }
       pluginsByAuthorId.get(aid).push(p);
     });
-    
-    // Output duplicates with details
+
     duplicates.forEach(aid => {
       const plugins = pluginsByAuthorId.get(aid);
       console.error(`  - "${aid}" appears ${plugins.length} times:`);

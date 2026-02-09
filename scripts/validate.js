@@ -42,7 +42,7 @@ try {
   const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
   const seen = new Set();
   const duplicates = new Set();
-  
+
   for (const aid of authorIds) {
     if (seen.has(aid)) {
       duplicates.add(aid);
