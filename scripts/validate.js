@@ -20,7 +20,7 @@ try {
   // Validate
   const ajv = new Ajv({ 
     allErrors: true,
-    strict: false  // Allow Draft 2020-12 features
+    strict: false  // Disable Ajv strict-mode checks (e.g. unknown keywords) for this schema
   });
   addFormats(ajv);
   
