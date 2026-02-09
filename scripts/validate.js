@@ -18,9 +18,17 @@ try {
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
   // Validate
-  const ajv = new Ajv({ allErrors: true });
+  const ajv = new Ajv({ 
+    allErrors: true,
+    strict: false  // Disable Ajv strict-mode checks (e.g. unknown keywords) for this schema
+  });
   addFormats(ajv);
-  const validate = ajv.compile(schema);
+  
+  // Remove $schema from schema before validation (it's metadata, not part of validation)
+  const schemaToValidate = { ...schema };
+  delete schemaToValidate.$schema;
+  
+  const validate = ajv.compile(schemaToValidate);
 
   const valid = validate(registry);
 
