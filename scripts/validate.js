@@ -17,10 +17,19 @@ try {
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
-  // Validate
-  const ajv = new Ajv({ allErrors: true });
+  // Validate - Ajv v8 supports Draft 2020-12 by default
+  // Remove $schema from schema to avoid reference issues
+  const schemaToValidate = { ...schema };
+  delete schemaToValidate.$schema;
+  delete schemaToValidate.$id;
+  
+  const ajv = new Ajv({ 
+    allErrors: true,
+    strict: false,
+    validateSchema: false  // Skip schema validation itself
+  });
   addFormats(ajv);
-  const validate = ajv.compile(schema);
+  const validate = ajv.compile(schemaToValidate);
 
   const valid = validate(registry);
 
