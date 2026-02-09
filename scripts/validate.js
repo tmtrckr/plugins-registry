@@ -41,10 +41,19 @@ try {
 
   // Additional checks - check for duplicates by author+id combination
   const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
-  const duplicates = authorIds.filter((aid, index) => authorIds.indexOf(aid) !== index);
+  const seen = new Set();
+  const duplicates = new Set();
+  
+  for (const aid of authorIds) {
+    if (seen.has(aid)) {
+      duplicates.add(aid);
+    } else {
+      seen.add(aid);
+    }
+  }
 
-  if (duplicates.length > 0) {
-    console.error('❌ Duplicate plugin author+id combinations found:', duplicates);
+  if (duplicates.size > 0) {
+    console.error('❌ Duplicate plugin author+id combinations found:', Array.from(duplicates));
     process.exit(1);
   }
 

@@ -13,13 +13,32 @@ try {
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   // Check for duplicates by author+id combination (uniqueness is per author)
   const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
-  const duplicates = authorIds.filter((aid, index) => authorIds.indexOf(aid) !== index);
+  const seen = new Set();
+  const duplicates = new Set();
   
-  if (duplicates.length > 0) {
+  for (const aid of authorIds) {
+    if (seen.has(aid)) {
+      duplicates.add(aid);
+    } else {
+      seen.add(aid);
+    }
+  }
+  
+  if (duplicates.size > 0) {
     console.error('❌ Duplicate plugin author+id combinations found:');
+    // Build a map of author+id to plugins for efficient lookup
+    const pluginsByAuthorId = new Map();
+    registry.plugins.forEach(p => {
+      const aid = p.author + '/' + p.id;
+      if (!pluginsByAuthorId.has(aid)) {
+        pluginsByAuthorId.set(aid, []);
+      }
+      pluginsByAuthorId.get(aid).push(p);
+    });
+    
+    // Output duplicates with details
     duplicates.forEach(aid => {
-      const [author, id] = aid.split('/');
-      const plugins = registry.plugins.filter(p => p.author === author && p.id === id);
+      const plugins = pluginsByAuthorId.get(aid);
       console.error(`  - "${aid}" appears ${plugins.length} times:`);
       plugins.forEach(p => {
         console.error(`    * ${p.name} (${p.repository})`);
