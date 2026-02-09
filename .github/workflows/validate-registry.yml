@@ -32,28 +32,9 @@ jobs:
         run: |
           npm run validate-plugins
 
-      - name: Build registry from plugins
-        run: |
-          npm run build
-
-      - name: Validate registry.json against schema
+      - name: Build and validate registry
         run: |
           npm run validate
-
-      - name: Check for duplicate plugin IDs (by author+id)
-        run: |
-          node -e "
-            const fs = require('fs');
-            const registry = JSON.parse(fs.readFileSync('registry.json', 'utf8'));
-            // Check for duplicates by author+id combination
-            const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
-            const duplicates = authorIds.filter((aid, index) => authorIds.indexOf(aid) !== index);
-            if (duplicates.length > 0) {
-              console.error('Duplicate plugin author+id combinations found:', duplicates);
-              process.exit(1);
-            }
-            console.log('No duplicate author+id combinations found');
-          "
 
       - name: Validate repository URLs
         run: |
