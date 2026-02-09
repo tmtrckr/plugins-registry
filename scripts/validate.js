@@ -38,12 +38,12 @@ try {
     process.exit(1);
   }
 
-  // Additional checks
-  const ids = registry.plugins.map(p => p.id);
-  const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+  // Additional checks - check for duplicates by author+id combination
+  const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
+  const duplicates = authorIds.filter((aid, index) => authorIds.indexOf(aid) !== index);
 
   if (duplicates.length > 0) {
-    console.error('❌ Duplicate plugin IDs found:', duplicates);
+    console.error('❌ Duplicate plugin author+id combinations found:', duplicates);
     process.exit(1);
   }
 
