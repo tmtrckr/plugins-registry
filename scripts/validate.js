@@ -29,6 +29,7 @@ try {
     validateSchema: false  // Skip schema validation itself
   });
   addFormats(ajv);
+  
   const validate = ajv.compile(schemaToValidate);
 
   const valid = validate(registry);
