@@ -36,13 +36,9 @@ jobs:
         run: |
           npm run build
 
-      - name: Install validation dependencies
-        run: |
-          npm install -g ajv-cli
-
       - name: Validate registry.json against schema
         run: |
-          ajv validate -s registry.schema.json -d registry.json || exit 1
+          npm run validate
 
       - name: Check for duplicate plugin IDs (by author+id)
         run: |
