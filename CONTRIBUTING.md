@@ -144,19 +144,26 @@ This will:
 
 ### Step 6: Submit Pull Request
 
-1. **Build the registry** (optional, CI will do this, or pre-commit hook will do it):
+1. **Validate your changes:**
    ```bash
-   npm run build
+   npm run validate-all
    ```
+   
+   This will:
+   - Validate individual plugin files
+   - Build the registry from plugins
+   - Validate the registry against the schema
 
 2. **Commit your changes:**
    ```bash
    git add plugins/your-normalized-author-name/your-plugin-id/plugin.json
-   git add registry.json  # If you built it locally
    git commit -m "Add plugin: your-plugin-name"
    ```
    
-   **Note**: If you installed pre-commit hooks, validation will run automatically before the commit completes.
+   **Important Notes:**
+   - **Do NOT commit `registry.json`** - CI will automatically regenerate it when your PR is merged
+   - The build script preserves timestamps when plugins haven't changed, so you won't see unnecessary diffs
+   - If you installed pre-commit hooks, validation will run automatically and will unstage `registry.json` if only the timestamp changed
 
 2. **Push to your fork:**
    ```bash
@@ -185,8 +192,9 @@ To update your plugin entry:
 2. Update `latest_version` if you've released a new version
 3. Update `description`, `tags`, or other fields as needed
 4. **Note**: Do not change the `author` field or move the plugin to a different author directory without coordination
-5. Run `npm run build` to regenerate `registry.json` (or let CI do it)
-6. Submit a pull request with changes
+5. Run `npm run validate-all` to validate your changes
+6. Commit only the `plugin.json` file - **do NOT commit `registry.json`** (CI will regenerate it)
+7. Submit a pull request with changes
 
 ## Plugin Verification
 
