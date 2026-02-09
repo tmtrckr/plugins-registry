@@ -61,12 +61,26 @@ if [ $BUILD_STATUS -ne 0 ]; then
   exit 1
 fi
 
-# Check if registry.json needs to be committed
-if git diff --quiet registry.json; then
-  echo "${GREEN}✅ Registry is up to date${NC}"
+# Check if registry.json is staged
+if git diff --cached --quiet registry.json 2>/dev/null; then
+  echo "${GREEN}✅ registry.json is not staged${NC}"
 else
-  echo "${YELLOW}⚠️  registry.json has been updated${NC}"
-  echo "${YELLOW}💡 Consider running: git add registry.json${NC}"
+  # Check if only last_updated timestamp changed
+  # Get the staged diff and check if it only contains last_updated changes
+  STAGED_DIFF=$(git diff --cached registry.json)
+  
+  # Count lines that are actual content changes (not metadata lines)
+  CONTENT_CHANGES=$(echo "$STAGED_DIFF" | grep -E "^[+-]" | grep -v "last_updated" | wc -l)
+  
+  if [ "$CONTENT_CHANGES" -eq 0 ]; then
+    # Only last_updated changed - unstage it since CI will regenerate it
+    echo "${YELLOW}⚠️  registry.json only has timestamp changes (last_updated)${NC}"
+    echo "${GREEN}📦 Unstaging registry.json (CI will regenerate it)${NC}"
+    git restore --staged registry.json
+  else
+    # Actual plugin data changed - keep it staged
+    echo "${GREEN}✅ registry.json has actual changes and will be committed${NC}"
+  fi
 fi
 
 echo "\n${GREEN}✅ Pre-commit validation passed!${NC}"

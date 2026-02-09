@@ -107,11 +107,29 @@ try {
   // Sort plugins by id
   plugins.sort((a, b) => a.id.localeCompare(b.id));
   
+  // Preserve existing last_updated timestamp if registry.json exists and plugins haven't changed
+  let lastUpdated = new Date().toISOString();
+  if (fs.existsSync(registryPath)) {
+    try {
+      const existingRegistry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+      const existingPluginsJson = JSON.stringify(existingRegistry.plugins || []);
+      const newPluginsJson = JSON.stringify(plugins);
+      
+      // Only update timestamp if plugins actually changed
+      if (existingPluginsJson === newPluginsJson && existingRegistry.last_updated) {
+        lastUpdated = existingRegistry.last_updated;
+      }
+    } catch (error) {
+      // If we can't parse existing registry, use new timestamp
+      // (this is fine, registry might be corrupted or in wrong format)
+    }
+  }
+  
   // Build registry
   const registry = {
     "$schema": "./registry.schema.json",
     "version": "1.0.0",
-    "last_updated": new Date().toISOString(),
+    "last_updated": lastUpdated,
     "plugins": plugins
   };
   
