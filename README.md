@@ -19,14 +19,14 @@ Plugins are organized by author in `plugins/`:
 
 ```
 plugins/
-├── TimeTracker/                    # Author directory (normalized author name)
-│   ├── pomodoro-plugin/
+├── developer-name/                 # Author directory (normalized author name)
+│   ├── example-plugin/
 │   │   ├── plugin.json            # Plugin metadata
 │   │   ├── icon.png               # Optional: Plugin icon
 │   │   └── README.md              # Optional: Extended documentation
-│   └── billing-plugin/
+│   └── another-plugin/
 │       └── plugin.json
-├── OtherAuthor/                    # Another author
+├── another-author/                 # Another author
 │   └── other-plugin/
 │       └── plugin.json
 └── [other-authors]/
@@ -64,7 +64,25 @@ Each plugin's `plugin.json` follows the schema defined in `registry.schema.json`
 
 ## Adding a Plugin
 
-To add your plugin to the registry:
+### Quick Start (Recommended)
+
+1. **Fork this repository** on GitHub
+2. **Clone your fork** locally:
+   ```bash
+   git clone https://github.com/your-username/time-tracker-plugins-registry.git
+   cd time-tracker-plugins-registry
+   npm install
+   ```
+3. **Use the interactive script** to create a plugin entry:
+   ```bash
+   npm run create-plugin
+   ```
+   This will guide you through all required fields and create the correct structure automatically.
+4. **Commit and create a Pull Request** (see [CONTRIBUTING.md](CONTRIBUTING.md) for details)
+
+### Manual Process
+
+To add your plugin manually:
 
 1. **Fork this repository**
 2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
@@ -99,30 +117,30 @@ To add your plugin to the registry:
 
 ### Example Plugin Entry
 
-For a plugin with author "Developer Name" and ID "calendar-sync":
+For a plugin with author "Developer Name" and ID "example-plugin":
 
 **Directory structure:**
 ```
 plugins/
   developer-name/          # Normalized author name
-    calendar-sync/         # Plugin ID
+    example-plugin/        # Plugin ID
       plugin.json
 ```
 
 **plugin.json:**
 ```json
 {
-  "$schema": "../../registry.schema.json#/properties/plugins/items",
-  "id": "calendar-sync",
-  "name": "Calendar Sync",
+  "$schema": "../../../registry.schema.json#/properties/plugins/items",
+  "id": "example-plugin",
+  "name": "Example Plugin",
   "author": "Developer Name",
-  "repository": "https://github.com/user/calendar-sync-plugin",
+  "repository": "https://github.com/user/plugin-example",
   "latest_version": "1.0.0",
-  "description": "Sync time entries with Google Calendar, Outlook, and Apple Calendar",
+  "description": "This is an example plugin for the Time Tracker plugins registry",
   "category": "integration",
   "verified": false,
   "downloads": 0,
-  "tags": ["calendar", "sync", "google", "outlook"],
+  "tags": ["example", "plugin", "time-tracker"],
   "license": "MIT",
   "min_core_version": "0.3.0",
   "max_core_version": "1.0.0",
@@ -174,6 +192,16 @@ The Time Tracker application discovers plugins through:
 npm install
 ```
 
+### Creating a Plugin Entry
+
+Use the interactive script to create a new plugin entry:
+
+```bash
+npm run create-plugin
+```
+
+This will guide you through all required fields and create the correct directory structure.
+
 ### Building the Registry
 
 Build `registry.json` from individual plugin files:
@@ -214,9 +242,22 @@ Format the registry (sorts plugins and updates timestamp):
 npm run format
 ```
 
+### Git Hooks
+
+Install pre-commit hooks to automatically validate plugins before committing:
+
+```bash
+npm run install-hooks
+```
+
+This will:
+- Validate plugin files before each commit
+- Automatically build the registry when plugin files change
+- Prevent invalid commits from being made
+
 ### Example Plugin Entry
 
-See `plugins/calendar-sync/plugin.json` for a complete example of a plugin entry.
+See `plugins/developer-name/example-plugin/plugin.json` for a complete example of a plugin entry.
 
 ## Contributing
 
@@ -226,6 +267,13 @@ Contributions are welcome! Please:
 2. Ensure all URLs are valid
 3. Provide clear descriptions
 4. Use appropriate categories and tags
+
+### Ways to Contribute
+
+- **Add a Plugin**: Use `npm run create-plugin` or follow the [manual process](CONTRIBUTING.md)
+- **Request a Plugin**: Create an [issue using the plugin request template](.github/ISSUE_TEMPLATE/add-plugin.md)
+- **Report Issues**: Open an issue for bugs or improvements
+- **Improve Documentation**: Submit PRs to improve docs
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 

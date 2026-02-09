@@ -9,7 +9,9 @@
     "validate-plugins": "node scripts/validate-plugins.js",
     "validate-all": "npm run validate-plugins && npm run validate",
     "format": "node scripts/format.js",
-    "check-duplicates": "node scripts/check-duplicates.js"
+    "check-duplicates": "node scripts/check-duplicates.js",
+    "create-plugin": "node scripts/create-plugin.js",
+    "install-hooks": "node scripts/install-hooks.js"
   },
   "keywords": [
     "time-tracker",

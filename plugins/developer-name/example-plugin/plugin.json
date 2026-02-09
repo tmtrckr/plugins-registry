@@ -1,11 +1,11 @@
 {
-  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "$schema": "../../../registry.schema.json#/properties/plugins/items",
   "id": "example-plugin",
   "name": "Example Plugin",
   "author": "Developer Name",
   "repository": "https://github.com/user/plugin-example",
   "latest_version": "1.0.0",
-  "description": "This is an example plugin for the Time Tracker plugins registry.",
+  "description": "This is an example plugin for the Time Tracker plugins registry. Demonstrates the folder structure with author grouping.",
   "category": "integration",
   "verified": false,
   "downloads": 0,

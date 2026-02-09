@@ -21,8 +21,8 @@ try {
 
   // Load schema - extract plugin item schema
   const fullSchema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+  // Create plugin schema without $schema (it's a subschema, not a full schema)
   const pluginSchema = {
-    $schema: fullSchema.$schema,
     ...fullSchema.properties.plugins.items
   };
   
@@ -33,7 +33,10 @@ try {
       .replace(/[^a-z0-9_-]/g, '');
   }
 
-  const ajv = new Ajv({ allErrors: true });
+  const ajv = new Ajv({ 
+    allErrors: true,
+    strict: false  // Allow Draft 2020-12 features
+  });
   addFormats(ajv);
   const validate = ajv.compile(pluginSchema);
   

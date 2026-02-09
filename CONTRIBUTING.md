@@ -23,9 +23,41 @@ Before submitting your plugin to the registry, ensure:
    - License file
    - Plugin manifest (`plugin.toml`)
 
-### Step 2: Add Plugin Entry
+### Step 2: Fork the Repository
 
-1. **Fork this repository**
+**Important**: Before creating a plugin entry, you must fork this repository:
+
+1. **Fork this repository** on GitHub
+2. **Clone your fork** locally:
+   ```bash
+   git clone https://github.com/your-username/time-tracker-plugins-registry.git
+   cd time-tracker-plugins-registry
+   ```
+3. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+### Step 3: Add Plugin Entry
+
+**Option A: Use the Interactive Script (Recommended)**
+
+The easiest way to create a plugin entry is using the interactive script:
+
+```bash
+npm run create-plugin
+```
+
+This script will:
+- Guide you through all required fields
+- Automatically normalize your author name
+- Create the correct directory structure
+- Generate a properly formatted `plugin.json` file
+- Validate the entry format
+
+**Option B: Manual Creation**
+
+1. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
 
 2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
    - Example: "John Doe" → "john-doe"
@@ -84,7 +116,7 @@ Before submitting your plugin to the registry, ensure:
 - **max_core_version**: Maximum compatible Time Tracker version
 - **api_version**: Plugin API version your plugin uses
 
-### Step 3: Validate Your Entry
+### Step 4: Validate Your Entry
 
 Before submitting, validate your entry:
 
@@ -97,9 +129,22 @@ Before submitting, validate your entry:
 7. **Check for duplicates**: Ensure no other plugin has the same `{author}/{id}` combination
 8. **Build and validate**: Run `npm run build && npm run validate` to ensure everything works
 
-### Step 4: Submit Pull Request
+### Step 5: Install Git Hooks (Optional but Recommended)
 
-1. **Build the registry** (optional, CI will do this):
+Install pre-commit hooks to automatically validate your changes before committing:
+
+```bash
+npm run install-hooks
+```
+
+This will:
+- Install a pre-commit hook that validates plugins before each commit
+- Automatically build the registry when plugin files change
+- Prevent invalid commits from being made
+
+### Step 6: Submit Pull Request
+
+1. **Build the registry** (optional, CI will do this, or pre-commit hook will do it):
    ```bash
    npm run build
    ```
@@ -110,6 +155,8 @@ Before submitting, validate your entry:
    git add registry.json  # If you built it locally
    git commit -m "Add plugin: your-plugin-name"
    ```
+   
+   **Note**: If you installed pre-commit hooks, validation will run automatically before the commit completes.
 
 2. **Push to your fork:**
    ```bash
@@ -122,7 +169,7 @@ Before submitting, validate your entry:
    - Link to your plugin repository
    - Screenshots or demo (if applicable)
 
-### Step 5: Review Process
+### Step 6: Review Process
 
 - Registry maintainers will review your submission
 - Automated validation will check schema compliance
