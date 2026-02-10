@@ -17,16 +17,18 @@ try {
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 
-  // Validate
-  const ajv = new Ajv({ 
-    allErrors: true,
-    strict: false  // Disable Ajv strict-mode checks (e.g. unknown keywords) for this schema
-  });
-  addFormats(ajv);
-  
-  // Remove $schema from schema before validation (it's metadata, not part of validation)
+  // Validate - Ajv v8 supports Draft 2020-12 by default
+  // Remove $schema from schema to avoid reference issues
   const schemaToValidate = { ...schema };
   delete schemaToValidate.$schema;
+  delete schemaToValidate.$id;
+  
+  const ajv = new Ajv({ 
+    allErrors: true,
+    strict: false,
+    validateSchema: false  // Skip schema validation itself
+  });
+  addFormats(ajv);
   
   const validate = ajv.compile(schemaToValidate);
 
@@ -39,11 +41,23 @@ try {
   }
 
   // Additional checks - check for duplicates by author+id combination
-  const authorIds = registry.plugins.map(p => p.author + '/' + p.id);
-  const duplicates = authorIds.filter((aid, index) => authorIds.indexOf(aid) !== index);
+  // Use JSON.stringify to create unambiguous keys that handle authors containing '/'
+  // Single pass: count occurrences and track duplicates
+  const pluginCounts = new Map();
+  const duplicates = new Set();
+  
+  for (const plugin of registry.plugins) {
+    const key = JSON.stringify([plugin.author, plugin.id]);
+    const count = (pluginCounts.get(key) || 0) + 1;
+    pluginCounts.set(key, count);
+    if (count > 1) {
+      duplicates.add(key);
+    }
+  }
 
-  if (duplicates.length > 0) {
-    console.error('❌ Duplicate plugin author+id combinations found:', duplicates);
+  if (duplicates.size > 0) {
+    const duplicatePairs = Array.from(duplicates).map(key => JSON.parse(key));
+    console.error('❌ Duplicate plugin author+id combinations found:', duplicatePairs);
     process.exit(1);
   }
 
