@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../registry.schema.json#/properties/plugins/items",
+  "id": "pomodoro",
+  "name": "Pomodoro",
+  "author": "TimeTracker",
+  "repository": "https://github.com/tmtrckr/plugin-pomodoro",
+  "latest_version": "1.0.0",
+  "description": "Pomodoro timer and focus sessions",
+  "category": "productivity",
+  "verified": false,
+  "downloads": 0,
+  "tags": [
+    "pomodoro"
+  ],
+  "license": "MIT",
+  "min_core_version": "0.2.7",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}
