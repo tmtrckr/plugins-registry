@@ -11,15 +11,38 @@ const registryPath = path.join(__dirname, '..', 'registry.json');
 
 try {
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-  const ids = registry.plugins.map(p => p.id);
+  // Check for duplicates by author+id combination (uniqueness is per author)
+  // Use JSON.stringify to create unambiguous keys that handle authors containing '/'
+  // Single pass: count occurrences, track duplicates, and build plugin groups
+  const pluginCounts = new Map();
+  const pluginsByAuthorId = new Map();
+  const duplicates = new Set();
   
-  const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+  for (const plugin of registry.plugins) {
+    const key = JSON.stringify([plugin.author, plugin.id]);
+    const count = (pluginCounts.get(key) || 0) + 1;
+    pluginCounts.set(key, count);
+    
+    // Build plugin groups for output
+    if (!pluginsByAuthorId.has(key)) {
+      pluginsByAuthorId.set(key, []);
+    }
+    pluginsByAuthorId.get(key).push(plugin);
+    
+    // Track duplicates (appears more than once)
+    if (count > 1) {
+      duplicates.add(key);
+    }
+  }
   
-  if (duplicates.length > 0) {
-    console.error('❌ Duplicate plugin IDs found:');
-    duplicates.forEach(id => {
-      const plugins = registry.plugins.filter(p => p.id === id);
-      console.error(`  - "${id}" appears ${plugins.length} times:`);
+  if (duplicates.size > 0) {
+    console.error('❌ Duplicate plugin author+id combinations found:');
+    // Output duplicates with details (each duplicate key appears only once in Set)
+    duplicates.forEach(key => {
+      const [author, id] = JSON.parse(key);
+      const plugins = pluginsByAuthorId.get(key);
+      const count = pluginCounts.get(key);
+      console.error(`  - Author: "${author}", ID: "${id}" appears ${count} times:`);
       plugins.forEach(p => {
         console.error(`    * ${p.name} (${p.repository})`);
       });
@@ -27,8 +50,8 @@ try {
     process.exit(1);
   }
   
-  console.log('✅ No duplicate plugin IDs found');
-  console.log(`   Total plugins: ${ids.length}`);
+  console.log('✅ No duplicate plugin author+id combinations found');
+  console.log(`   Total plugins: ${registry.plugins.length}`);
   process.exit(0);
 } catch (error) {
   console.error('❌ Error checking duplicates:', error.message);
