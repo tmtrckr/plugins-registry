@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "title": "Plugin Manifest Schema",
+  "description": "Schema for plugin manifest (plugin.json) and registry plugin entry",
+  "type": "object",
+  "required": ["id", "name", "author", "repository", "latest_version", "description"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique plugin identifier (lowercase, alphanumeric with hyphens)",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the plugin",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "author": {
+      "type": "string",
+      "description": "Plugin author name",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "repository": {
+      "type": "string",
+      "description": "GitHub repository URL",
+      "pattern": "^https://github\\.com/[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$"
+    },
+    "latest_version": {
+      "type": "string",
+      "description": "Latest available version (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plugin description",
+      "minLength": 10,
+      "maxLength": 500
+    },
+    "category": {
+      "type": "string",
+      "description": "Plugin category",
+      "enum": ["integration", "productivity", "reporting", "automation", "export", "import", "ui", "other"],
+      "default": "other"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether the plugin is verified by registry maintainers",
+      "default": false
+    },
+    "downloads": {
+      "type": "integer",
+      "description": "Total download count",
+      "minimum": 0,
+      "default": 0
+    },
+    "tags": {
+      "type": "array",
+      "description": "Searchable tags for the plugin",
+      "items": { "type": "string", "minLength": 1, "maxLength": 30 },
+      "uniqueItems": true,
+      "maxItems": 10
+    },
+    "icon": {
+      "type": "string",
+      "description": "URL to plugin icon image",
+      "format": "uri"
+    },
+    "homepage": {
+      "type": "string",
+      "description": "Plugin homepage URL",
+      "format": "uri"
+    },
+    "license": {
+      "type": "string",
+      "description": "Plugin license (SPDX identifier)",
+      "default": "MIT"
+    },
+    "min_core_version": {
+      "type": "string",
+      "description": "Minimum required Time Tracker core version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "max_core_version": {
+      "type": "string",
+      "description": "Maximum compatible Time Tracker core version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "api_version": {
+      "type": "string",
+      "description": "Plugin API version",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Plugin version for version-specific manifest (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.]+)?$"
+    },
+    "distribution": {
+      "type": "object",
+      "description": "Distribution source and integrity checksums",
+      "required": ["type", "url", "checksums"],
+      "properties": {
+        "type": { "type": "string", "enum": ["binary", "source", "npm", "pip"], "description": "Distribution type" },
+        "url": { "type": "string", "description": "Download URL", "format": "uri" },
+        "checksums": {
+          "type": "object",
+          "required": ["sha256"],
+          "properties": {
+            "sha256": { "type": "string", "description": "SHA256 checksum", "pattern": "^[a-f0-9]{64}$" },
+            "sha512": { "type": "string", "description": "SHA512 checksum", "pattern": "^[a-f0-9]{128}$" }
+          }
+        }
+      }
+    },
+    "versions": {
+      "type": "array",
+      "description": "All available versions (added by build; not in plugin.json)",
+      "items": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$" }
+    },
+    "path": {
+      "type": "string",
+      "description": "Path to plugin directory without version (added by build; not in plugin.json)"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../registry.schema.json#/properties/plugins/items",
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
   "id": "example-plugin",
   "name": "Example Plugin",
   "author": "Developer Name",

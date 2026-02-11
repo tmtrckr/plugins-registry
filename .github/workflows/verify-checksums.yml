@@ -1,0 +1,47 @@
+name: Verify Checksums
+
+on:
+  pull_request:
+    paths:
+      - 'plugins/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'plugins/**'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify checksums
+        run: |
+          set -e
+          FAILED=0
+          for manifest in $(find plugins -type f \( -name 'plugin.json' -o -name 'manifest.json' \) 2>/dev/null); do
+            URL=$(jq -r '.distribution.url // empty' "$manifest" 2>/dev/null) || true
+            if [ -z "$URL" ]; then continue; fi
+            EXPECTED=$(jq -r '.distribution.checksums.sha256 // empty' "$manifest" 2>/dev/null) || true
+            if [ -z "$EXPECTED" ]; then continue; fi
+            echo "Verifying checksum for $manifest..."
+            if ! curl -sfL "$URL" -o /tmp/plugin_dl.bin; then
+              echo "Failed to download: $URL"
+              FAILED=1
+              continue
+            fi
+            ACTUAL=$(sha256sum /tmp/plugin_dl.bin | cut -d' ' -f1)
+            rm -f /tmp/plugin_dl.bin
+            if [ "$EXPECTED" != "$ACTUAL" ]; then
+              echo "Checksum mismatch for $manifest"
+              echo "  Expected: $EXPECTED"
+              echo "  Actual:   $ACTUAL"
+              FAILED=1
+            else
+              echo "  OK"
+            fi
+          done
+          if [ "$FAILED" -ne 0 ]; then exit 1; fi
+          echo "All checksums verified."

@@ -1,0 +1,48 @@
+name: Security Scan
+
+on:
+  pull_request:
+    paths:
+      - 'plugins/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'plugins/**'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ClamAV
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clamav clamav-daemon
+          sudo systemctl stop clamav-freshclam 2>/dev/null || true
+          sudo freshclam || true
+
+      - name: Scan plugin artifacts
+        run: |
+          set -e
+          SCAN_FAILED=0
+          for manifest in $(find plugins -type f \( -name 'plugin.json' -o -name 'manifest.json' \) 2>/dev/null); do
+            URL=$(jq -r '.distribution.url // empty' "$manifest" 2>/dev/null) || true
+            if [ -z "$URL" ]; then continue; fi
+            echo "Scanning artifact for $manifest..."
+            if ! curl -sfL "$URL" -o /tmp/plugin_scan.bin; then
+              echo "Warning: Could not download $URL, skipping scan"
+              continue
+            fi
+            if clamscan --no-summary /tmp/plugin_scan.bin 2>/dev/null; then
+              echo "  OK - no threats found"
+            else
+              echo "  FAIL - potential threat detected in $manifest"
+              SCAN_FAILED=1
+            fi
+            rm -f /tmp/plugin_scan.bin
+          done
+          if [ "$SCAN_FAILED" -ne 0 ]; then exit 1; fi
+          echo "Security scan complete."

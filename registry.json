@@ -1,10 +1,10 @@
 {
-  "$schema": "./registry.schema.json",
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/registry.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-02-09T17:36:22.260Z",
+  "last_updated": "2026-02-11T20:46:22.116Z",
   "plugins": [
     {
-      "$schema": "../../../registry.schema.json#/properties/plugins/items",
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
       "id": "example-plugin",
       "name": "Example Plugin",
       "author": "Developer Name",
@@ -24,7 +24,16 @@
       "license": "MIT",
       "min_core_version": "0.3.0",
       "max_core_version": "1.0.0",
-      "api_version": "1.0"
+      "api_version": "1.0",
+      "versions": [
+        "1.0.0"
+      ],
+      "path": "plugins/d/developer-name/example-plugin"
     }
-  ]
+  ],
+  "statistics": {
+    "total_plugins": 1,
+    "total_versions": 1,
+    "total_authors": 1
+  }
 }
