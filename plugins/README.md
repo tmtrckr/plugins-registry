@@ -1,62 +1,42 @@
 # Plugins Directory
 
-Each plugin in this registry is organized by author, with plugins grouped in author directories.
+Plugins are stored in a **hierarchical structure**: `plugins/{first-letter}/{author}/{plugin-id}/{version}/`.
 
 ## Directory Structure
 
-Plugins are organized as `plugins/{author}/{plugin-id}/`:
-
 ```
 plugins/
-├── developer-name/                   # Author directory (normalized name)
-│   ├── example-plugin/               # Plugin directory
-│   │   ├── plugin.json               # Plugin metadata (required)
-│   │   ├── icon.png                  # Optional: Plugin icon (128x128px recommended)
-│   │   ├── screenshot.png            # Optional: Plugin screenshot
-│   │   └── README.md                 # Optional: Extended documentation
-│   └── jira-integration/             # Another plugin by same author
-│       └── plugin.json
-├── another-author/                   # Another author
-│   └── my-plugin/
-│       └── plugin.json
+├── d/                              # First letter of normalized author
+│   └── developer-name/
+│       └── example-plugin/
+│           ├── 1.0.0/
+│           │   ├── plugin.json     # Required
+│           │   └── README.md       # Optional
+│           └── 1.1.0/
+│               └── plugin.json
+├── j/
+│   └── john-doe/
+│       └── jira-integration/
+│           └── 1.0.0/
+│               └── plugin.json
 └── ...
 ```
 
-## Author Name Normalization
+## Rules
 
-Author directory names must be normalized:
-- Convert to lowercase
-- Replace spaces with hyphens
-- Remove special characters (keep only alphanumeric, hyphens, underscores)
-
-**Examples:**
-- `"John Doe"` → `john-doe`
-- `"My Company"` → `my-company`
-- `"TimeTracker"` → `timetracker`
-- `"user_name"` → `user_name`
-
-## Plugin JSON Format
-
-Each `plugin.json` file follows the schema defined in `../../registry.schema.json` (plugin object schema).
-
-**Important rules:**
-1. The `id` field in `plugin.json` must match the plugin directory name
-2. The `author` field must match the author directory name (after normalization)
-3. The `$schema` path should be `../../registry.schema.json#/properties/plugins/items`
+- **First letter**: First character of the normalized author name (e.g. `developer-name` → `d`).
+- **Author normalization**: Lowercase, spaces → hyphens, remove special characters.
+- **Plugin ID**: Directory name must match the `id` field in `plugin.json`.
+- **Version**: Directory name must be semver (e.g. `1.0.0`). Multiple versions per plugin are allowed.
+- **plugin.json**: Required in each version directory; must follow the registry schema.
 
 ## Adding a Plugin
 
-1. **Normalize your author name** (see above)
-2. **Create author directory** if it doesn't exist: `plugins/{normalized-author}/`
-3. **Create plugin directory**: `plugins/{normalized-author}/{plugin-id}/`
-4. **Create `plugin.json`** with your plugin metadata
-5. **Ensure**:
-   - `id` matches the plugin directory name
-   - `author` matches the author directory name (after normalization)
-6. **Run `npm run build`** to regenerate `registry.json`
-7. **Run `npm run validate`** to verify everything is correct
+1. Normalize your author name and determine the first letter.
+2. Create `plugins/{letter}/{normalized-author}/{plugin-id}/{version}/`.
+3. Add `plugin.json` with `id`, `author`, `latest_version` (matching the version directory), and other required fields.
+4. Run `npm run validate-all` from the repository root.
 
-## Example Structure
+## Example
 
-See `developer-name/example-plugin/plugin.json` for a complete example.
-
+See `d/developer-name/example-plugin/1.0.0/plugin.json` for a full example.

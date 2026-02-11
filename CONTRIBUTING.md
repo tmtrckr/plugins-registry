@@ -2,6 +2,24 @@
 
 Thank you for your interest in contributing to the Time Tracker Plugins Registry!
 
+## Developer Certificate of Origin (DCO)
+
+By contributing to this project, you agree to the [Developer Certificate of Origin](https://developercertificate.org/) (DCO). You must sign off your commits to certify that you have the right to submit your contribution.
+
+To sign off your commits, add the `-s` flag when committing:
+
+```bash
+git commit -s -m "Add plugin: your-plugin-name"
+```
+
+This adds a line like the following to your commit message:
+
+```
+Signed-off-by: Your Name <your.email@example.com>
+```
+
+All pull requests are checked for DCO sign-off. Commits without sign-off will cause the DCO check to fail.
+
 ## How to Add a Plugin
 
 ### Step 1: Prepare Your Plugin
@@ -9,7 +27,7 @@ Thank you for your interest in contributing to the Time Tracker Plugins Registry
 Before submitting your plugin to the registry, ensure:
 
 1. **Your plugin follows the Plugin Template structure**
-   - See [Plugin Template](https://github.com/bthos/time-tracker-plugin-template) for details
+   - See [Plugin Template](https://github.com/tmtrckr/plugin-template) for details
    - Must have a `plugin.toml` manifest file
    - Must be hosted on GitHub
 
@@ -30,8 +48,8 @@ Before submitting your plugin to the registry, ensure:
 1. **Fork this repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/time-tracker-plugins-registry.git
-   cd time-tracker-plugins-registry
+   git clone https://github.com/your-username/plugins-registry.git
+   cd plugins-registry
    ```
 3. **Install dependencies**:
    ```bash
@@ -57,28 +75,19 @@ This script will:
 
 **Option B: Manual Creation**
 
-1. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
+1. **Normalize author name**: lowercase, spaces → hyphens, remove special characters (e.g. "John Doe" → "john-doe"). The **first letter** of the normalized name is the partition (e.g. `j`).
 
-2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
-   - Example: "John Doe" → "john-doe"
-   - Example: "My Company" → "my-company"
-   - Example: "TimeTracker" → "timetracker"
-
-3. **Create author directory** if it doesn't exist:
+2. **Create the versioned path**:
    ```bash
-   mkdir -p plugins/your-normalized-author-name
+   mkdir -p plugins/j/john-doe/your-plugin-id/1.0.0
    ```
+   Use your normalized author, plugin id, and version (semver).
 
-4. **Create plugin directory** in the author directory:
-   ```bash
-   mkdir plugins/your-normalized-author-name/your-plugin-id
-   ```
-
-5. **Create `plugin.json`** in the plugin directory with your plugin metadata:
+3. **Create `plugin.json`** in that version directory (e.g. `plugins/j/john-doe/your-plugin-id/1.0.0/plugin.json`):
 
 ```json
 {
-  "$schema": "../../registry.schema.json#/properties/plugins/items",
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
   "id": "your-plugin-id",
   "name": "Your Plugin Name",
   "author": "Your Name",
@@ -96,10 +105,10 @@ This script will:
 }
 ```
 
-**Important**: 
-- The `id` field must match the plugin directory name exactly
-- The `author` field is **required** and must match the author directory name when normalized
-- Author name normalization: lowercase, spaces → hyphens, special characters removed
+**Important**:
+- Path must be `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/plugin.json`
+- `id` must match the plugin directory name; `author` must normalize to the author directory name
+- Version directory must be semver (e.g. `1.0.0`)
 
 **Field Guidelines:**
 
@@ -115,6 +124,20 @@ This script will:
 - **min_core_version**: Minimum Time Tracker version required
 - **max_core_version**: Maximum compatible Time Tracker version
 - **api_version**: Plugin API version your plugin uses
+
+**Checksums (optional but recommended):** If you provide a `distribution` object with a direct download `url`, you must include a `checksums.sha256` field. CI will verify that the file at the URL matches the SHA256 checksum. This ensures integrity of plugin artifacts. Example:
+
+```json
+"distribution": {
+  "type": "binary",
+  "url": "https://github.com/user/repo/releases/download/v1.0.0/plugin.zip",
+  "checksums": {
+    "sha256": "hex-encoded-64-character-sha256-hash"
+  }
+}
+```
+
+You can compute SHA256 locally with `sha256sum` (Linux/macOS) or `certutil -hashfile file.zip SHA256` (Windows).
 
 ### Step 4: Validate Your Entry
 
@@ -154,10 +177,10 @@ This will:
    - Build the registry from plugins
    - Validate the registry against the schema
 
-2. **Commit your changes:**
+2. **Commit your changes** (with DCO sign-off):
    ```bash
-   git add plugins/your-normalized-author-name/your-plugin-id/plugin.json
-   git commit -m "Add plugin: your-plugin-name"
+   git add plugins/{letter}/{normalized-author}/{plugin-id}/{version}/plugin.json
+   git commit -s -m "Add plugin: your-plugin-name"
    ```
    
    **Important Notes:**
@@ -188,13 +211,10 @@ This will:
 
 To update your plugin entry:
 
-1. Edit `plugin.json` in your plugin's directory (e.g., `plugins/{author}/{plugin-id}/plugin.json`)
-2. Update `latest_version` if you've released a new version
-3. Update `description`, `tags`, or other fields as needed
-4. **Note**: Do not change the `author` field or move the plugin to a different author directory without coordination
-5. Run `npm run validate-all` to validate your changes
-6. Commit only the `plugin.json` file - **do NOT commit `registry.json`** (CI will regenerate it)
-7. Submit a pull request with changes
+1. For **metadata changes** (description, tags, etc.): edit `plugin.json` in the version directory (e.g. `plugins/d/developer-name/example-plugin/1.0.0/plugin.json`).
+2. For a **new version**: create a new version directory (e.g. `plugins/d/developer-name/example-plugin/1.1.0/`) and add a new `plugin.json` there.
+3. Do not change the `author` field or move the plugin to a different author path without coordination.
+4. Run `npm run validate-all`, then commit and submit a pull request. Do **not** commit `registry.json` (CI regenerates it).
 
 ## Plugin Verification
 
@@ -249,9 +269,9 @@ Choose the most appropriate category:
 If you have questions about contributing:
 
 - Open an issue in this repository
-- Check the [Plugin Template documentation](https://github.com/bthos/time-tracker-plugin-template)
+- Check the [Plugin Template documentation](https://github.com/tmtrckr/plugin-template)
 - Review existing plugin entries for examples
 
 ## Code of Conduct
 
-Please be respectful and constructive in all interactions. We welcome contributions from everyone.
+We follow the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Please be respectful and constructive in all interactions. We welcome contributions from everyone.

@@ -1,0 +1,45 @@
+name: Bug Report
+description: Report a problem with a plugin or the registry
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: input
+    id: plugin_id
+    attributes:
+      label: Plugin ID
+      description: Which plugin has the issue? (e.g. author.plugin-name or plugin-id)
+      placeholder: "author.plugin-name"
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happens?
+      placeholder: Describe what you see
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this?
+      placeholder: "1. Go to...\n2. Click...\n3. See error"
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Time Tracker / Registry version
+      description: Version if relevant
+      placeholder: "0.3.0"
+    validations:
+      required: false
