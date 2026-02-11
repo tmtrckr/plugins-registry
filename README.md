@@ -219,6 +219,12 @@ npm run build
 
 ### Validation
 
+Validate schema files (manifest + registry) against JSON Schema draft 2020-12:
+
+```bash
+npm run validate-schemas
+```
+
 Validate individual plugin files:
 
 ```bash
