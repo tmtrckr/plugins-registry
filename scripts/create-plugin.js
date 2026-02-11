@@ -10,7 +10,7 @@ const path = require('path');
 const readline = require('readline');
 
 const pluginsDir = path.join(__dirname, '..', 'plugins');
-const schemaPath = path.join(__dirname, '..', 'registry.schema.json');
+const schemaPath = path.join(__dirname, '..', 'schemas', 'manifest.schema.json');
 
 // Normalize author name for directory
 function normalizeAuthorName(author) {
@@ -106,23 +106,20 @@ async function createPlugin() {
     const homepage = await question('Homepage URL (optional, press Enter to skip): ') || repository;
     const icon = await question('Icon URL (optional, press Enter to skip): ') || '';
 
-    // Create directory structure
-    const authorDir = path.join(pluginsDir, normalizedAuthor);
-    const pluginDir = path.join(authorDir, pluginId);
+    // Hierarchical structure: plugins/{first-letter}/{author}/{plugin-id}/{version}/
+    const firstLetter = normalizedAuthor[0] || 'other';
+    const pluginDir = path.join(pluginsDir, firstLetter, normalizedAuthor, pluginId, latestVersion);
     const pluginJsonPath = path.join(pluginDir, 'plugin.json');
 
-    // Check if plugin already exists
     if (fs.existsSync(pluginJsonPath)) {
-      console.error(`❌ Plugin already exists at ${normalizedAuthor}/${pluginId}/`);
+      console.error(`❌ Plugin version already exists at ${firstLetter}/${normalizedAuthor}/${pluginId}/${latestVersion}/`);
       process.exit(1);
     }
 
-    // Create directories
     fs.mkdirSync(pluginDir, { recursive: true });
 
-    // Create plugin.json
     const pluginJson = {
-      "$schema": "../../../registry.schema.json#/properties/plugins/items",
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
       "id": pluginId,
       "name": pluginName,
       "author": author,
@@ -154,7 +151,7 @@ async function createPlugin() {
     );
 
     console.log('\n✅ Plugin entry created successfully!');
-    console.log(`\n📁 Location: plugins/${normalizedAuthor}/${pluginId}/plugin.json`);
+    console.log(`\n📁 Location: plugins/${firstLetter}/${normalizedAuthor}/${pluginId}/${latestVersion}/plugin.json`);
     console.log('\n📝 Next steps:');
     console.log('  1. Review the created plugin.json file');
     console.log('  2. Run: npm run validate-all');

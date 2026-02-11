@@ -1,0 +1,76 @@
+name: Plugin Submission
+description: Request to add a new plugin to the registry
+title: "[Add Plugin] "
+labels: ["plugin-request", "needs-triage"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Plugin Name
+      placeholder: "My Plugin"
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      placeholder: "Your Name or GitHub username"
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: Repository URL
+      placeholder: "https://github.com/username/repo"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Latest Version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Clear description (10-500 characters)
+      placeholder: What does your plugin do?
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - integration
+        - productivity
+        - reporting
+        - automation
+        - export
+        - import
+        - ui
+        - other
+    validations:
+      required: true
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Comma-separated (e.g. jira, sync, calendar)
+      placeholder: "tag1, tag2, tag3"
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Confirm before submitting
+      options:
+        - label: Plugin follows the Plugin Template structure
+          required: true
+        - label: Plugin has plugin.toml and is on GitHub
+          required: true
+        - label: I have read CONTRIBUTING.md and will open a PR with the plugin entry
+          required: true

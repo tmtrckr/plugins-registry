@@ -1,0 +1,43 @@
+name: Validate Manifest
+
+on:
+  pull_request:
+    paths:
+      - 'plugins/**'
+      - 'schemas/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate schema files
+        run: npm run validate-schemas
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            plugins/**/*.json
+            plugins/**/plugin.json
+
+      - name: Validate all plugin files
+        run: |
+          npm run validate-plugins
+
+      - name: Check for duplicates
+        run: npm run check-duplicates
+
+      - name: Build and validate registry
+        run: npm run validate

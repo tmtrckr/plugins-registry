@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Validates registry.json against registry.schema.json
+ * Validates registry.json against schemas/registry.schema.json
  */
 
 const fs = require('fs');
@@ -9,25 +9,27 @@ const path = require('path');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
-const registryPath = path.join(__dirname, '..', 'registry.json');
-const schemaPath = path.join(__dirname, '..', 'registry.schema.json');
+const rootDir = path.join(__dirname, '..');
+const registryPath = path.join(rootDir, 'registry.json');
+const registrySchemaPath = path.join(rootDir, 'schemas', 'registry.schema.json');
+const manifestSchemaPath = path.join(rootDir, 'schemas', 'manifest.schema.json');
 
 try {
-  // Load registry and schema
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+  const registrySchema = JSON.parse(fs.readFileSync(registrySchemaPath, 'utf8'));
+  const manifestSchema = JSON.parse(fs.readFileSync(manifestSchemaPath, 'utf8'));
 
-  // Validate
-  const ajv = new Ajv({ 
+  const ajv = new Ajv({
     allErrors: true,
-    strict: false  // Disable Ajv strict-mode checks (e.g. unknown keywords) for this schema
+    strict: false,
+    validateSchema: false
   });
   addFormats(ajv);
-  
-  // Remove $schema from schema before validation (it's metadata, not part of validation)
-  const schemaToValidate = { ...schema };
+  ajv.addSchema(manifestSchema);
+
+  const schemaToValidate = { ...registrySchema };
   delete schemaToValidate.$schema;
-  
+
   const validate = ajv.compile(schemaToValidate);
 
   const valid = validate(registry);
