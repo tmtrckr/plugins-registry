@@ -1,8 +1,29 @@
 {
   "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/registry.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-02-11T20:46:22.116Z",
+  "last_updated": "2026-02-13T20:30:19.826Z",
   "plugins": [
+    {
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+      "id": "billing",
+      "name": "Billing",
+      "author": "TimeTracker",
+      "repository": "https://github.com/tmtrckr/plugin-billing",
+      "latest_version": "1.0.0",
+      "description": "Billable time tracking plugin for Time Tracker application.",
+      "category": "other",
+      "verified": false,
+      "downloads": 0,
+      "tags": [],
+      "license": "MIT",
+      "min_core_version": "0.3.0",
+      "max_core_version": "1.0.0",
+      "api_version": "1.0",
+      "versions": [
+        "1.0.0"
+      ],
+      "path": "plugins/t/timetracker/billing"
+    },
     {
       "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
       "id": "example-plugin",
@@ -29,11 +50,82 @@
         "1.0.0"
       ],
       "path": "plugins/d/developer-name/example-plugin"
+    },
+    {
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+      "id": "goals",
+      "name": "Goals",
+      "author": "TimeTracker",
+      "repository": "https://github.com/tmtrckr/plugin-goals",
+      "latest_version": "1.0.0",
+      "description": "Goal tracking plugin for Time Tracker application.",
+      "category": "productivity",
+      "verified": false,
+      "downloads": 0,
+      "tags": [
+        "productivity"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.3.0",
+      "max_core_version": "1.0.0",
+      "api_version": "1.0",
+      "versions": [
+        "1.0.0"
+      ],
+      "path": "plugins/t/timetracker/goals"
+    },
+    {
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+      "id": "pomodoro-timer",
+      "name": "Pomodoro Timer",
+      "author": "TimeTracker",
+      "repository": "https://github.com/tmtrckr/plugin-pomodoro",
+      "latest_version": "1.0.0",
+      "description": "Pomodoro timer plugin for Time Tracker application",
+      "category": "productivity",
+      "verified": false,
+      "downloads": 0,
+      "tags": [
+        "pomodoro"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.3.0",
+      "max_core_version": "1.0.0",
+      "api_version": "1.0",
+      "versions": [
+        "1.0.0"
+      ],
+      "path": "plugins/t/timetracker/pomodoro-timer"
+    },
+    {
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+      "id": "projects-tasks",
+      "name": "Projects & Tasks",
+      "author": "TimeTracker",
+      "repository": "https://github.com/tmtrckr/plugin-projects-tasks",
+      "latest_version": "1.0.0",
+      "description": "Project and task management plugin for Time Tracker application.",
+      "category": "reporting",
+      "verified": false,
+      "downloads": 0,
+      "tags": [
+        "projects",
+        "tasks",
+        "reporting"
+      ],
+      "license": "MIT",
+      "min_core_version": "0.3.0",
+      "max_core_version": "1.0.0",
+      "api_version": "1.0",
+      "versions": [
+        "1.0.0"
+      ],
+      "path": "plugins/t/timetracker/projects-tasks"
     }
   ],
   "statistics": {
-    "total_plugins": 1,
-    "total_versions": 1,
-    "total_authors": 1
+    "total_plugins": 5,
+    "total_versions": 5,
+    "total_authors": 2
   }
 }

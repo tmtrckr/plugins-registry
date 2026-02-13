@@ -1,7 +1,7 @@
 ## Plugin Submission Checklist
 
 - [ ] Plugin ID follows format: `author.plugin-name` or lowercase-with-hyphens
-- [ ] Manifest passes `npm run validate-plugins` (or `npm run validate-all`)
+- [ ] Plugin JSON is valid (CI will validate automatically)
 - [ ] SHA256 checksum verified (if `distribution` with checksums is used)
 - [ ] Plugin tested locally
 - [ ] README / docs updated if adding new author or changing structure

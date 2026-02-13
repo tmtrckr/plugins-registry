@@ -15,6 +15,12 @@ const registrySchemaPath = path.join(rootDir, 'schemas', 'registry.schema.json')
 const manifestSchemaPath = path.join(rootDir, 'schemas', 'manifest.schema.json');
 
 try {
+  if (!fs.existsSync(registryPath)) {
+    console.log('⚠️  registry.json not found. Skipping registry validation.');
+    console.log('   Run `npm run build` to generate registry.json first.');
+    process.exit(0);
+  }
+
   const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   const registrySchema = JSON.parse(fs.readFileSync(registrySchemaPath, 'utf8'));
   const manifestSchema = JSON.parse(fs.readFileSync(manifestSchemaPath, 'utf8'));

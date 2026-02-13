@@ -2,88 +2,90 @@
 
 Thank you for your interest in contributing to the Time Tracker Plugins Registry!
 
+## Quick Summary
+
+Adding a plugin is simple:
+1. **Fork** this repository
+2. **Create** `plugins/{letter}/{author}/{plugin-id}/{version}/plugin.json`
+3. **Submit** a Pull Request
+
+CI handles validation and registry building automatically. No local setup required (unless you want to use the interactive script).
+
+👉 **See [FAQ](#frequently-asked-questions-faq) below for common questions.**
+
 ## Developer Certificate of Origin (DCO)
 
-By contributing to this project, you agree to the [Developer Certificate of Origin](https://developercertificate.org/) (DCO). You must sign off your commits to certify that you have the right to submit your contribution.
+**What is DCO?**  
+DCO is a simple way to certify that you have the right to submit your contribution. It's required for all contributions.
 
-To sign off your commits, add the `-s` flag when committing:
+**How to sign off:**
+Just add `-s` flag when committing:
 
 ```bash
 git commit -s -m "Add plugin: your-plugin-name"
 ```
 
-This adds a line like the following to your commit message:
+This automatically adds `Signed-off-by: Your Name <your.email@example.com>` to your commit.
 
-```
-Signed-off-by: Your Name <your.email@example.com>
-```
-
-All pull requests are checked for DCO sign-off. Commits without sign-off will cause the DCO check to fail.
+**⚠️ Important:** All PRs are checked for DCO sign-off. Commits without sign-off will fail the DCO check.
 
 ## How to Add a Plugin
 
-### Step 1: Prepare Your Plugin
+### Prerequisites
 
-Before submitting your plugin to the registry, ensure:
+Before adding your plugin, make sure:
 
-1. **Your plugin follows the Plugin Template structure**
-   - See [Plugin Template](https://github.com/tmtrckr/plugin-template) for details
-   - Must have a `plugin.toml` manifest file
-   - Must be hosted on GitHub
+✅ Your plugin is hosted on GitHub  
+✅ Your plugin repository has a `plugin.toml` manifest file  
+✅ You have at least one GitHub Release with version tag (e.g., `v1.0.0`)  
+✅ Your repository includes a README and license file
 
-2. **Your plugin has at least one release**
-   - Create a GitHub Release with version tag (e.g., `v1.0.0`)
-   - Release should include compiled binaries for supported platforms
-   - See Plugin Template for GitHub Actions workflow
+> 💡 **New to plugin development?** Check out the [Plugin Template](https://github.com/tmtrckr/plugin-template) for a complete example.
 
-3. **Your plugin repository includes:**
-   - Clear README with installation instructions
-   - License file
-   - Plugin manifest (`plugin.toml`)
+### Step 1: Fork and Clone
 
-### Step 2: Fork the Repository
-
-**Important**: Before creating a plugin entry, you must fork this repository:
-
-1. **Fork this repository** on GitHub
-2. **Clone your fork** locally:
+1. **Fork this repository** on GitHub (click the "Fork" button)
+2. **Clone your fork**:
    ```bash
    git clone https://github.com/your-username/plugins-registry.git
    cd plugins-registry
    ```
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
 
-### Step 3: Add Plugin Entry
+> 💡 **Tip**: You only need `npm install` if you want to use the interactive script. For manual creation, you can skip it.
 
-**Option A: Use the Interactive Script (Recommended)**
+### Step 2: Create Plugin Entry
 
-The easiest way to create a plugin entry is using the interactive script:
+**Option A: Interactive Script (Easiest! 🎯)**
 
 ```bash
+npm install
 npm run create-plugin
 ```
 
-This script will:
-- Guide you through all required fields
-- Automatically normalize your author name
-- Create the correct directory structure
-- Generate a properly formatted `plugin.json` file
-- Validate the entry format
+The script will:
+- ✅ Ask you questions about your plugin
+- ✅ Automatically normalize your author name
+- ✅ Create the correct directory structure
+- ✅ Generate a properly formatted `plugin.json`
+- ✅ Validate everything for you
 
 **Option B: Manual Creation**
 
-1. **Normalize author name**: lowercase, spaces → hyphens, remove special characters (e.g. "John Doe" → "john-doe"). The **first letter** of the normalized name is the partition (e.g. `j`).
+If you prefer to create the entry manually:
 
-2. **Create the versioned path**:
-   ```bash
-   mkdir -p plugins/j/john-doe/your-plugin-id/1.0.0
-   ```
-   Use your normalized author, plugin id, and version (semver).
+**1. Normalize your author name:**
+- Convert to lowercase
+- Replace spaces with hyphens
+- Remove special characters
+- Example: "John Doe" → "john-doe"
+- First letter: `j` (this becomes the partition folder)
 
-3. **Create `plugin.json`** in that version directory (e.g. `plugins/j/john-doe/your-plugin-id/1.0.0/plugin.json`):
+**2. Create the directory structure:**
+```bash
+mkdir -p plugins/j/john-doe/your-plugin-id/1.0.0
+```
+
+**3. Create `plugin.json`** in that directory:
 
 ```json
 {
@@ -105,12 +107,13 @@ This script will:
 }
 ```
 
-**Important**:
-- Path must be `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/plugin.json`
-- `id` must match the plugin directory name; `author` must normalize to the author directory name
-- Version directory must be semver (e.g. `1.0.0`)
+**⚠️ Important Rules:**
+- Path format: `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/plugin.json`
+- `id` field must match the plugin directory name
+- `author` field must normalize to the author directory name  
+- `latest_version` must match the version directory name
 
-**Field Guidelines:**
+**📖 Field Descriptions:**
 
 - **id**: Lowercase, alphanumeric with hyphens only (e.g., `calendar-sync`, `jira-integration`)
 - **name**: Display name (max 100 characters)
@@ -139,59 +142,27 @@ This script will:
 
 You can compute SHA256 locally with `sha256sum` (Linux/macOS) or `certutil -hashfile file.zip SHA256` (Windows).
 
-### Step 4: Validate Your Entry
+### Step 3: Quick Check Before Submitting
 
-Before submitting, validate your entry:
+Before creating your PR, verify:
 
-1. **Check JSON syntax**: Ensure valid JSON
-2. **Validate against schema**: Your entry must match `registry.schema.json`
-3. **Verify ID matches directory**: The `id` field must match the plugin directory name
-4. **Verify author matches directory**: The `author` field (when normalized) must match the author directory name
-5. **Verify author is present**: The `author` field is required and cannot be empty
-6. **Verify repository URL**: Ensure the GitHub repository exists and is accessible
-7. **Check for duplicates**: Ensure no other plugin has the same `{author}/{id}` combination
-8. **Validate your plugin**: Run `npm run validate-plugins` to check your plugin.json file
-   - CI will automatically build the registry and validate it when you submit a PR
-   - You can optionally run `npm run validate-all` for a full local check (includes building registry), but it's not required
+✅ `plugin.json` is valid JSON (no syntax errors)  
+✅ All required fields are filled in  
+✅ `id` matches your plugin directory name  
+✅ `author` normalizes to your author directory name  
+✅ Repository URL is correct and accessible
 
-### Step 5: Install Git Hooks (Optional but Recommended)
+> 💡 **Optional**: If you have Node.js, you can run `npm install && npm run validate-plugins` to check locally. But don't worry - CI will validate everything automatically when you submit your PR!
 
-Install pre-commit hooks to automatically validate your changes before committing:
+### Step 4: Submit Pull Request
 
-```bash
-npm run install-hooks
-```
-
-This will:
-- Install a pre-commit hook that validates plugins before each commit
-- Automatically build the registry when plugin files change
-- Prevent invalid commits from being made
-
-### Step 6: Submit Pull Request
-
-1. **Validate your plugin:**
-   ```bash
-   npm run validate-plugins
-   ```
-   
-   This checks your plugin.json file. CI will automatically:
-   - Validate schema files
-   - Validate all plugin files
-   - Build the registry from plugins
-   - Validate the built registry against the schema
-   
-   **Optional**: Run `npm run validate-all` for a full local check (builds and validates registry locally), but CI does this automatically.
-
-2. **Commit your changes** (with DCO sign-off):
+1. **Commit your changes** (with DCO sign-off):
    ```bash
    git add plugins/{letter}/{normalized-author}/{plugin-id}/{version}/plugin.json
    git commit -s -m "Add plugin: your-plugin-name"
    ```
    
-   **Important Notes:**
-   - **Do NOT commit `registry.json`** - CI will automatically regenerate it when your PR is merged
-   - The build script preserves timestamps when plugins haven't changed, so you won't see unnecessary diffs
-   - If you installed pre-commit hooks, validation will run automatically and will unstage `registry.json` if only the timestamp changed
+   **Important**: Do NOT commit `registry.json` - CI will automatically build and commit it after your PR is merged to main.
 
 2. **Push to your fork:**
    ```bash
@@ -204,7 +175,19 @@ This will:
    - Link to your plugin repository
    - Screenshots or demo (if applicable)
 
-### Step 6: Review Process
+### Step 5: What Happens Next
+
+**When you submit your PR:**
+- ✅ CI automatically validates your plugin
+- ✅ Maintainers review your submission
+- ✅ Automated checks verify schema compliance and repository URLs
+
+**After your PR is merged:**
+- ✅ CI automatically builds the registry
+- ✅ Your plugin appears in `registry.json`
+- ✅ Your plugin is available in the Time Tracker Marketplace!
+
+### Review Process
 
 - Registry maintainers will review your submission
 - Automated validation will check schema compliance
@@ -214,12 +197,38 @@ This will:
 
 ## Updating an Existing Plugin
 
-To update your plugin entry:
+### Updating Plugin Metadata
 
-1. For **metadata changes** (description, tags, etc.): edit `plugin.json` in the version directory (e.g. `plugins/d/developer-name/example-plugin/1.0.0/plugin.json`).
-2. For a **new version**: create a new version directory (e.g. `plugins/d/developer-name/example-plugin/1.1.0/`) and add a new `plugin.json` there.
-3. Do not change the `author` field or move the plugin to a different author path without coordination.
-4. Run `npm run validate-plugins` to check your plugin.json, then commit and submit a pull request. Do **not** commit `registry.json` (CI regenerates it automatically).
+To update description, tags, or other metadata:
+
+1. Edit `plugin.json` in your existing version directory
+   - Example: `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`
+2. Commit and submit a PR
+
+### Adding a New Version
+
+To add a new version of your plugin:
+
+1. Create a new version directory:
+   ```bash
+   mkdir -p plugins/j/john-doe/jira-integration/1.1.0
+   ```
+2. Create `plugin.json` in the new version directory
+3. Update `latest_version` in the new `plugin.json` to match the directory name
+4. Commit and submit a PR
+
+**Example structure for multiple versions:**
+```
+plugins/j/john-doe/jira-integration/
+├── 1.0.0/
+│   └── plugin.json
+└── 1.1.0/
+    └── plugin.json  ← New version
+```
+
+**⚠️ Important:**
+- Do NOT change the `author` field or move the plugin to a different author path
+- Do NOT commit `registry.json` - CI handles this automatically
 
 ## Plugin Verification
 
@@ -268,6 +277,52 @@ Choose the most appropriate category:
 - Include technology names (e.g., `google`, `jira`, `slack`)
 - Include functionality keywords (e.g., `sync`, `export`, `automation`)
 - Use lowercase, avoid spaces
+
+## Frequently Asked Questions (FAQ)
+
+### Do I need to install Node.js to add a plugin?
+
+**No!** You only need Node.js if you want to use the interactive `create-plugin` script. For manual creation, you can just create the files directly.
+
+### Do I need to build the registry locally?
+
+**No!** CI automatically builds `registry.json` after your PR is merged. Just create your `plugin.json` file and submit a PR.
+
+### What if I make a mistake in my plugin.json?
+
+Don't worry! CI will validate your plugin when you submit a PR and tell you what's wrong. You can fix it and update your PR.
+
+### Can I update my plugin later?
+
+Yes! You can:
+- Update metadata by editing the existing `plugin.json`
+- Add a new version by creating a new version directory
+
+### What if my author name has special characters?
+
+Special characters are removed during normalization. For example:
+- "José García" → "jose-garcia"
+- "O'Brien" → "obrien"
+- "Smith & Co." → "smith-co"
+
+### Can I have multiple versions of my plugin?
+
+Yes! Create separate version directories:
+```
+plugins/j/john-doe/my-plugin/
+├── 1.0.0/
+│   └── plugin.json
+└── 1.1.0/
+    └── plugin.json
+```
+
+### Do I need to commit registry.json?
+
+**No!** Never commit `registry.json`. CI builds and commits it automatically after your PR is merged.
+
+### How long does it take for my plugin to appear?
+
+After your PR is merged, CI automatically builds the registry (usually takes 1-2 minutes). Your plugin will then appear in `registry.json` and be available in the marketplace.
 
 ## Questions?
 
