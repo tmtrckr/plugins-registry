@@ -150,7 +150,9 @@ Before submitting, validate your entry:
 5. **Verify author is present**: The `author` field is required and cannot be empty
 6. **Verify repository URL**: Ensure the GitHub repository exists and is accessible
 7. **Check for duplicates**: Ensure no other plugin has the same `{author}/{id}` combination
-8. **Build and validate**: Run `npm run build && npm run validate` to ensure everything works
+8. **Validate your plugin**: Run `npm run validate-plugins` to check your plugin.json file
+   - CI will automatically build the registry and validate it when you submit a PR
+   - You can optionally run `npm run validate-all` for a full local check (includes building registry), but it's not required
 
 ### Step 5: Install Git Hooks (Optional but Recommended)
 
@@ -167,15 +169,18 @@ This will:
 
 ### Step 6: Submit Pull Request
 
-1. **Validate your changes:**
+1. **Validate your plugin:**
    ```bash
-   npm run validate-all
+   npm run validate-plugins
    ```
    
-   This will:
-   - Validate individual plugin files
+   This checks your plugin.json file. CI will automatically:
+   - Validate schema files
+   - Validate all plugin files
    - Build the registry from plugins
-   - Validate the registry against the schema
+   - Validate the built registry against the schema
+   
+   **Optional**: Run `npm run validate-all` for a full local check (builds and validates registry locally), but CI does this automatically.
 
 2. **Commit your changes** (with DCO sign-off):
    ```bash
@@ -214,7 +219,7 @@ To update your plugin entry:
 1. For **metadata changes** (description, tags, etc.): edit `plugin.json` in the version directory (e.g. `plugins/d/developer-name/example-plugin/1.0.0/plugin.json`).
 2. For a **new version**: create a new version directory (e.g. `plugins/d/developer-name/example-plugin/1.1.0/`) and add a new `plugin.json` there.
 3. Do not change the `author` field or move the plugin to a different author path without coordination.
-4. Run `npm run validate-all`, then commit and submit a pull request. Do **not** commit `registry.json` (CI regenerates it).
+4. Run `npm run validate-plugins` to check your plugin.json, then commit and submit a pull request. Do **not** commit `registry.json` (CI regenerates it automatically).
 
 ## Plugin Verification
 
