@@ -47,6 +47,6 @@ module.exports = async function create(args) {
   fs.mkdirSync(pluginDir, { recursive: true });
   fs.writeFileSync(pluginPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
   console.log('Created:', pluginPath);
-  console.log('Next: npm run validate-all, then submit a PR.');
+  console.log('Next: npm run validate-files, then submit a PR.');
   return () => {};
 };

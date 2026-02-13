@@ -312,13 +312,13 @@ Validate the aggregated registry (requires registry.json to exist - run `npm run
 npm run validate
 ```
 
-Validate everything (schemas, plugins, and existing registry.json if present):
+Validate existing files (schemas, plugins, and registry.json if present):
 
 ```bash
-npm run validate-all
+npm run validate-files
 ```
 
-This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist)
+This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist). Note: This does not build the registry - run `npm run build` first if you need to generate registry.json.
 
 Check for duplicate plugin IDs:
 
@@ -362,7 +362,7 @@ Contributions are welcome! Please:
 2. Ensure all URLs are valid
 3. Provide clear descriptions
 4. Use appropriate categories and tags
-5. Sign off commits (DCO): `git commit -s -m "message"`
+5. Sign off commits (DCO): `git commit -s -m "message"` (requires valid email - see [CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin-dco))
 
 ### Ways to Contribute
 
