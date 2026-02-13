@@ -11,10 +11,16 @@
       "repository": "https://github.com/tmtrckr/plugin-billing",
       "latest_version": "1.0.0",
       "description": "Billable time tracking plugin for Time Tracker application.",
-      "category": "other",
+      "category": "billing",
       "verified": false,
       "downloads": 0,
-      "tags": [],
+      "tags": [
+        "billing",
+        "invoicing",
+        "finance",
+        "payments",
+        "billable-time"
+      ],
       "license": "MIT",
       "min_core_version": "0.3.0",
       "max_core_version": "1.0.0",
