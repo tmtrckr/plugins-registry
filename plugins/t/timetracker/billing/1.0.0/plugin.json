@@ -1,0 +1,17 @@
+{
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "id": "billing",
+  "name": "Billing",
+  "author": "TimeTracker",
+  "repository": "https://github.com/tmtrckr/plugin-billing",
+  "latest_version": "1.0.0",
+  "description": "Billable time tracking plugin for Time Tracker application.",
+  "category": "other",
+  "verified": false,
+  "downloads": 0,
+  "tags": [],
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}

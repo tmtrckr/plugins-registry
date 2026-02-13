@@ -1,0 +1,19 @@
+{
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "id": "goals",
+  "name": "Goals",
+  "author": "TimeTracker",
+  "repository": "https://github.com/tmtrckr/plugin-goals",
+  "latest_version": "1.0.0",
+  "description": "Goal tracking plugin for Time Tracker application.",
+  "category": "productivity",
+  "verified": false,
+  "downloads": 0,
+  "tags": [
+    "productivity"
+  ],
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}

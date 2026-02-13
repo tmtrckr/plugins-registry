@@ -1,0 +1,21 @@
+{
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "id": "projects-tasks",
+  "name": "Projects & Tasks",
+  "author": "TimeTracker",
+  "repository": "https://github.com/tmtrckr/plugin-projects-tasks",
+  "latest_version": "1.0.0",
+  "description": "Project and task management plugin for Time Tracker application.",
+  "category": "reporting",
+  "verified": false,
+  "downloads": 0,
+  "tags": [
+    "projects",
+    "tasks",
+    "reporting"
+  ],
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}
