@@ -26,3 +26,5 @@
 ## DCO
 
 By submitting this pull request, I certify that my contributions are made under the terms of the [Developer Certificate of Origin](https://developercertificate.org/). All commits are signed off with `git commit -s`.
+
+**Note:** DCO requires a valid email address that matches your Git commit author email. See [CONTRIBUTING.md](../CONTRIBUTING.md#developer-certificate-of-origin-dco) for details.

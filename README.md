@@ -315,7 +315,7 @@ npm run validate
 Validate everything (schemas, plugins, and existing registry.json if present):
 
 ```bash
-npm run validate-all
+npm run validate-files
 ```
 
 This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist)
@@ -362,7 +362,7 @@ Contributions are welcome! Please:
 2. Ensure all URLs are valid
 3. Provide clear descriptions
 4. Use appropriate categories and tags
-5. Sign off commits (DCO): `git commit -s -m "message"`
+5. Sign off commits (DCO): `git commit -s -m "message"` (requires valid email - see [CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin-dco))
 
 ### Ways to Contribute
 
