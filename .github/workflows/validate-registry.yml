@@ -33,4 +33,8 @@ jobs:
 
       - name: Validate registry (if exists)
         run: |
-          npm run validate || echo "⚠️  registry.json not found, skipping validation"
+          if [ -f registry.json ]; then
+            npm run validate
+          else
+            echo "⚠️  registry.json not found, skipping validation"
+          fi
