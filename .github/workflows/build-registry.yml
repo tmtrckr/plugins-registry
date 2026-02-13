@@ -9,6 +9,8 @@ on:
       - 'schemas/**'
     # Note: registry.json is in root and doesn't match these patterns,
     # so changes to it won't trigger this workflow (preventing infinite loops)
+  workflow_dispatch:
+    # Allows manual triggering of registry rebuild from GitHub Actions UI
 
 jobs:
   build:
