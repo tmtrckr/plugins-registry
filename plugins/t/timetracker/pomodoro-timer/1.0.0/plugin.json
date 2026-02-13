@@ -1,0 +1,19 @@
+{
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "id": "pomodoro-timer",
+  "name": "Pomodoro Timer",
+  "author": "TimeTracker",
+  "repository": "https://github.com/tmtrckr/plugin-pomodoro",
+  "latest_version": "1.0.0",
+  "description": "Pomodoro timer plugin for Time Tracker application",
+  "category": "productivity",
+  "verified": false,
+  "downloads": 0,
+  "tags": [
+    "pomodoro"
+  ],
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}
