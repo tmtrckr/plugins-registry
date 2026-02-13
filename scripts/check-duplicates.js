@@ -17,45 +17,24 @@ try {
   const pluginCounts = new Map();
   const pluginsByAuthorId = new Map();
   const duplicates = new Set();
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 4a0d7950fd07350b5532f4f0b0af7e7bda834e31
   for (const plugin of registry.plugins) {
     const key = JSON.stringify([plugin.author, plugin.id]);
     const count = (pluginCounts.get(key) || 0) + 1;
     pluginCounts.set(key, count);
-<<<<<<< HEAD
 
-=======
-    
-    // Build plugin groups for output
->>>>>>> 4a0d7950fd07350b5532f4f0b0af7e7bda834e31
     if (!pluginsByAuthorId.has(key)) {
       pluginsByAuthorId.set(key, []);
     }
     pluginsByAuthorId.get(key).push(plugin);
-<<<<<<< HEAD
 
-=======
-    
-    // Track duplicates (appears more than once)
->>>>>>> 4a0d7950fd07350b5532f4f0b0af7e7bda834e31
     if (count > 1) {
       duplicates.add(key);
     }
   }
-<<<<<<< HEAD
 
   if (duplicates.size > 0) {
     console.error('❌ Duplicate plugin author+id combinations found:');
-=======
-  
-  if (duplicates.size > 0) {
-    console.error('❌ Duplicate plugin author+id combinations found:');
-    // Output duplicates with details (each duplicate key appears only once in Set)
->>>>>>> 4a0d7950fd07350b5532f4f0b0af7e7bda834e31
     duplicates.forEach(key => {
       const [author, id] = JSON.parse(key);
       const plugins = pluginsByAuthorId.get(key);
