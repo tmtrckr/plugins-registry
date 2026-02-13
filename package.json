@@ -8,7 +8,7 @@
     "validate": "node scripts/validate.js",
     "validate-plugins": "node scripts/validate-plugins.js",
     "validate-schemas": "node scripts/validate-schemas.js",
-    "validate-all": "npm run validate-schemas && npm run validate-plugins && npm run build && npm run validate",
+    "validate-files": "npm run validate-schemas && npm run validate-plugins && npm run validate",
     "format": "node scripts/format.js",
     "check-duplicates": "node scripts/check-duplicates.js",
     "create-plugin": "node scripts/create-plugin.js",

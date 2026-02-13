@@ -1,0 +1,92 @@
+name: Build Registry
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'plugins/**'
+      - 'schemas/**'
+    paths-ignore:
+      - 'registry.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Validate schema files
+        run: |
+          npm run validate-schemas
+
+      - name: Validate individual plugin files
+        run: |
+          npm run validate-plugins
+
+      - name: Build registry
+        run: |
+          npm run build
+
+      - name: Validate registry
+        run: |
+          npm run validate
+
+      - name: Validate repository URLs
+        run: |
+          node -e "
+            const fs = require('fs');
+            const registry = JSON.parse(fs.readFileSync('registry.json', 'utf8'));
+            const https = require('https');
+            const http = require('http');
+            
+            async function checkUrl(url) {
+              return new Promise((resolve) => {
+                const client = url.startsWith('https') ? https : http;
+                const req = client.get(url, { timeout: 5000 }, (res) => {
+                  resolve(res.statusCode === 200 || res.statusCode === 301 || res.statusCode === 302);
+                });
+                req.on('error', () => resolve(false));
+                req.on('timeout', () => {
+                  req.destroy();
+                  resolve(false);
+                });
+              });
+            }
+            
+            (async () => {
+              for (const plugin of registry.plugins) {
+                if (plugin.repository) {
+                  const valid = await checkUrl(plugin.repository);
+                  if (!valid) {
+                    console.warn('Warning: Repository URL may be invalid:', plugin.repository);
+                  }
+                }
+              }
+              console.log('Repository URL validation complete');
+            })();
+          "
+
+      - name: Commit registry.json
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add registry.json
+          if git diff --staged --quiet; then
+            echo "No changes to registry.json"
+          else
+            git commit -m "chore: update registry.json [skip ci]"
+            git push
+          fi

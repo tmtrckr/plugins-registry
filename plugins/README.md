@@ -32,12 +32,25 @@ plugins/
 
 ## Adding a Plugin
 
-1. Normalize your author name and determine the first letter.
-2. Create `plugins/{letter}/{normalized-author}/{plugin-id}/{version}/`.
-3. Add `plugin.json` with `id`, `author`, `latest_version` (matching the version directory), and other required fields.
-4. Validate your plugin: Run `npm run validate-plugins` from the repository root.
-   - CI will automatically build and validate the registry when you submit a PR
+**Quick steps:**
+1. Normalize your author name (lowercase, spaces → hyphens)
+2. Create directory: `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/`
+3. Add `plugin.json` file with required fields
+4. Submit a pull request
+
+**Example:**
+- Author: "John Doe" → normalized: "john-doe" → first letter: `j`
+- Plugin ID: `jira-integration`
+- Version: `1.0.0`
+- Path: `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`
+
+**Important:**
+- `id` in `plugin.json` must match the plugin directory name
+- `author` in `plugin.json` must normalize to the author directory name
+- `latest_version` must match the version directory name
+
+👉 **For detailed instructions and examples, see [CONTRIBUTING.md](../CONTRIBUTING.md)**
 
 ## Example
 
-See `d/developer-name/example-plugin/1.0.0/plugin.json` for a full example.
+See `d/developer-name/example-plugin/1.0.0/plugin.json` for a complete example.

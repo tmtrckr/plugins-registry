@@ -1,7 +1,7 @@
 ## Plugin Submission Checklist
 
 - [ ] Plugin ID follows format: `author.plugin-name` or lowercase-with-hyphens
-- [ ] Manifest passes `npm run validate-plugins` (or `npm run validate-all`)
+- [ ] Plugin JSON is valid (CI will validate automatically)
 - [ ] SHA256 checksum verified (if `distribution` with checksums is used)
 - [ ] Plugin tested locally
 - [ ] README / docs updated if adding new author or changing structure
@@ -26,3 +26,5 @@
 ## DCO
 
 By submitting this pull request, I certify that my contributions are made under the terms of the [Developer Certificate of Origin](https://developercertificate.org/). All commits are signed off with `git commit -s`.
+
+**Note:** DCO requires a valid email address that matches your Git commit author email. See [CONTRIBUTING.md](../CONTRIBUTING.md#developer-certificate-of-origin-dco) for details.

@@ -8,7 +8,7 @@ Community-driven registry for Time Tracker application plugins. This repository 
 ## Statistics
 
 - **Total Plugins:** See [registry.json](registry.json) for current counts
-- **Registry:** [registry.json](registry.json) is built from `plugins/` and validated in CI
+- **Registry:** [registry.json](registry.json) is automatically built from `plugins/` by CI after PRs are merged
 
 ## Overview
 
@@ -52,7 +52,7 @@ plugins/
 - **Version** directory must be semver (e.g. `1.0.0`). Multiple versions per plugin are supported.
 - The `author` field in `plugin.json` is **required** and must normalize to the author directory name.
 
-The `registry.json` file is built from these plugin files using `npm run build` (latest version per plugin is used).
+The `registry.json` file is automatically built from these plugin files by CI (latest version per plugin is used).
 
 ### Plugin Metadata Schema
 
@@ -77,47 +77,108 @@ Each plugin's `plugin.json` follows the schema defined in `schemas/manifest.sche
 
 ## Adding a Plugin
 
-### Quick Start (Recommended)
+### 🚀 Quick Start (3 Simple Steps)
 
-1. **Fork this repository** on GitHub
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/your-username/plugins-registry.git
-   cd plugins-registry
-   npm install
-   ```
-3. **Use the interactive script** to create a plugin entry:
-   ```bash
-   npm run create-plugin
-   ```
-   This will guide you through all required fields and create the correct structure automatically.
-4. **Validate your plugin**:
-   ```bash
-   npm run validate-plugins
-   ```
-5. **Commit and create a Pull Request** (see [CONTRIBUTING.md](CONTRIBUTING.md) for details)
-   - CI will automatically build and validate the registry when you submit a PR
+**Step 1: Fork and Clone**
+```bash
+# 1. Fork this repository on GitHub (click "Fork" button)
+# 2. Clone your fork:
+git clone https://github.com/your-username/plugins-registry.git
+cd plugins-registry
+```
 
-### Manual Process
+**Step 2: Create Plugin Entry**
 
-To add your plugin manually:
+**Option A: Interactive Script (Easiest)**
+```bash
+npm install
+npm run create-plugin
+```
+The script will guide you through everything and create the correct structure automatically.
 
-1. **Fork this repository**
-2. **Normalize author name**: lowercase, spaces → hyphens, remove special characters (e.g. "John Doe" → "john-doe")
-3. **First letter**: use the first character of the normalized author (e.g. "john-doe" → `j`)
-4. **Create path**: `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/`
+**Option B: Manual Creation**
+1. Create directory: `plugins/{first-letter}/{author}/{plugin-id}/{version}/`
    - Example: `plugins/j/john-doe/jira-integration/1.0.0/`
-5. **Create `plugin.json`** in that version directory with your plugin metadata
-6. **Ensure**:
-   - `id` matches the plugin directory name (e.g. `jira-integration`)
-   - `author` matches the author directory when normalized (e.g. "John Doe" → "john-doe")
-   - `latest_version` or directory name is semver (e.g. `1.0.0`)
-7. **Validate your plugin**: Run `npm run validate-plugins` to check your plugin.json
-8. **Submit a pull request** (CI will automatically build and validate the registry)
+2. Create `plugin.json` file in that directory (see example below)
 
-**Example**: Plugin "jira-integration" by "John Doe", version 1.0.0:
-- Path: `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`
-- In `plugin.json`: `"id": "jira-integration"`, `"author": "John Doe"`, `"latest_version": "1.0.0"`
+**Step 3: Submit Pull Request**
+```bash
+git add plugins/j/john-doe/jira-integration/1.0.0/plugin.json
+git commit -s -m "Add plugin: jira-integration"
+git push origin main
+# Then create a Pull Request on GitHub
+```
+
+That's it! CI will automatically validate your plugin and build the registry after your PR is merged.
+
+### 📝 Example: Adding "Jira Integration" Plugin
+
+**Author:** John Doe  
+**Plugin ID:** jira-integration  
+**Version:** 1.0.0
+
+**1. Create the directory:**
+```bash
+mkdir -p plugins/j/john-doe/jira-integration/1.0.0
+```
+
+**2. Create `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`:**
+```json
+{
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
+  "id": "jira-integration",
+  "name": "Jira Integration",
+  "author": "John Doe",
+  "repository": "https://github.com/johndoe/jira-integration",
+  "latest_version": "1.0.0",
+  "description": "Sync time entries with Jira tickets",
+  "category": "integration",
+  "verified": false,
+  "downloads": 0,
+  "tags": ["jira", "sync", "integration"],
+  "license": "MIT",
+  "min_core_version": "0.3.0",
+  "max_core_version": "1.0.0",
+  "api_version": "1.0"
+}
+```
+
+**3. Commit and create PR:**
+```bash
+git add plugins/j/john-doe/jira-integration/1.0.0/plugin.json
+git commit -s -m "Add plugin: jira-integration"
+git push
+```
+
+### 📋 Understanding the Path Structure
+
+The path follows this pattern: `plugins/{first-letter}/{author}/{plugin-id}/{version}/`
+
+**Visual Example:**
+```
+plugins/
+└── j/                          ← First letter of "john-doe"
+    └── john-doe/               ← Normalized author name
+        └── jira-integration/   ← Plugin ID
+            └── 1.0.0/          ← Version
+                └── plugin.json ← Your plugin file
+```
+
+**How to determine each part:**
+
+| Part | How to Get It | Example |
+|------|---------------|---------|
+| **First letter** | First character of normalized author | "John Doe" → "john-doe" → `j` |
+| **Author** | Normalize: lowercase, spaces→hyphens | "John Doe" → `john-doe` |
+| **Plugin ID** | Your plugin identifier (lowercase, hyphens) | `jira-integration` |
+| **Version** | Semantic version number | `1.0.0` |
+
+**⚠️ Important rules:**
+- `id` in `plugin.json` must match the plugin directory name
+- `author` in `plugin.json` must normalize to the author directory name
+- `latest_version` must match the version directory name
+
+> 💡 **Need help?** See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions and FAQ.
 
 ### Plugin Requirements
 
@@ -199,7 +260,7 @@ The Time Tracker application discovers plugins through:
 
 ## Local Development
 
-**Note**: This section covers commands for repository maintainers. Plugin contributors only need `npm run validate-plugins` to check their plugin.json - CI handles the rest automatically.
+**Note**: This section covers commands for repository maintainers. Plugin contributors don't need to run any commands locally - CI handles validation and registry building automatically.
 
 ### Setup
 
@@ -231,7 +292,7 @@ npm run build
 
 ### Validation
 
-**For plugin contributors**: Run `npm run validate-plugins` to check your plugin.json file. CI will handle building and validating the registry automatically.
+**For plugin contributors**: CI automatically validates your plugin.json when you submit a PR. No local validation is required.
 
 **For repository maintainers**: Full validation commands:
 
@@ -251,13 +312,13 @@ Validate the aggregated registry (requires registry.json to exist - run `npm run
 npm run validate
 ```
 
-Validate everything (schemas, plugins, build registry, and validate registry):
+Validate existing files (schemas, plugins, and registry.json if present):
 
 ```bash
-npm run validate-all
+npm run validate-files
 ```
 
-This runs: `validate-schemas` → `validate-plugins` → `build` → `validate`
+This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist). Note: This does not build the registry - run `npm run build` first if you need to generate registry.json.
 
 Check for duplicate plugin IDs:
 
@@ -271,7 +332,7 @@ Format the registry (sorts plugins and updates timestamp):
 npm run format
 ```
 
-### Git Hooks
+### Git Hooks (Optional)
 
 Install pre-commit hooks to automatically validate plugins before committing:
 
@@ -279,10 +340,7 @@ Install pre-commit hooks to automatically validate plugins before committing:
 npm run install-hooks
 ```
 
-This will:
-- Validate plugin files before each commit
-- Automatically build the registry when plugin files change
-- Prevent invalid commits from being made
+This will validate plugin files before each commit. CI handles registry building automatically, so this is optional.
 
 ### Example Plugin Entry
 
@@ -304,11 +362,11 @@ Contributions are welcome! Please:
 2. Ensure all URLs are valid
 3. Provide clear descriptions
 4. Use appropriate categories and tags
-5. Sign off commits (DCO): `git commit -s -m "message"`
+5. Sign off commits (DCO): `git commit -s -m "message"` (requires valid email - see [CONTRIBUTING.md](CONTRIBUTING.md#developer-certificate-of-origin-dco))
 
 ### Ways to Contribute
 
-- **Add a Plugin**: Use `npm run create-plugin` or the [CLI](tools/cli) (`node tools/cli/src/index.js create`) or follow the [manual process](CONTRIBUTING.md)
+- **Add a Plugin**: Use `npm run create-plugin` (after `npm install`) or follow the [manual process](CONTRIBUTING.md)
 - **Request a Plugin**: Create an [issue using the plugin submission template](.github/ISSUE_TEMPLATE/plugin_submission.yml)
 - **Report Issues**: Open an issue for [bugs](.github/ISSUE_TEMPLATE/bug_report.yml) or [features](.github/ISSUE_TEMPLATE/feature_request.yml)
 - **Improve Documentation**: Submit PRs to improve docs
