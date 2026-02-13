@@ -10,7 +10,7 @@ const path = require('path');
 const readline = require('readline');
 
 const pluginsDir = path.join(__dirname, '..', 'plugins');
-const schemaPath = path.join(__dirname, '..', 'registry.schema.json');
+const schemaPath = path.join(__dirname, '..', 'schemas', 'manifest.schema.json');
 
 // Normalize author name for directory
 function normalizeAuthorName(author) {
@@ -19,9 +19,14 @@ function normalizeAuthorName(author) {
     .replace(/[^a-z0-9_-]/g, '');
 }
 
-// Validate plugin ID format
-function validatePluginId(id) {
-  return /^[a-z0-9-]+$/.test(id) && id.length >= 1 && id.length <= 50;
+// Generate plugin ID from plugin name
+function generatePluginId(pluginName) {
+  return pluginName.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 50);
 }
 
 // Create readline interface
@@ -36,50 +41,92 @@ function question(prompt) {
   });
 }
 
+// Ask question with validation and retry on error
+async function askWithValidation(prompt, validator, errorMessage) {
+  while (true) {
+    const answer = await question(prompt);
+    const validation = validator(answer);
+    if (validation.valid) {
+      return validation.value !== undefined ? validation.value : answer;
+    }
+    console.error(`❌ ${errorMessage || validation.error || 'Invalid input'}`);
+    console.log('   Please try again.\n');
+  }
+}
+
 async function createPlugin() {
   console.log('🚀 Time Tracker Plugin Registry - Create Plugin Entry\n');
   console.log('This script will help you create a plugin entry structure.\n');
 
   try {
     // Get plugin information
-    const pluginId = await question('Plugin ID (lowercase, alphanumeric with hyphens): ');
-    if (!validatePluginId(pluginId)) {
-      console.error('❌ Invalid plugin ID. Must be lowercase, alphanumeric with hyphens only.');
-      process.exit(1);
-    }
+    const pluginName = await askWithValidation(
+      'Plugin Name (display name): ',
+      (value) => {
+        if (!value || value.trim() === '') {
+          return { valid: false, error: 'Plugin name is required.' };
+        }
+        if (value.length > 100) {
+          return { valid: false, error: 'Plugin name must be max 100 characters.' };
+        }
+        return { valid: true };
+      }
+    );
 
-    const pluginName = await question('Plugin Name (display name): ');
-    if (!pluginName || pluginName.length > 100) {
-      console.error('❌ Plugin name is required and must be max 100 characters.');
+    // Generate plugin ID from plugin name
+    const pluginId = generatePluginId(pluginName);
+    if (!pluginId || pluginId.length === 0) {
+      console.error('❌ Could not generate valid plugin ID from plugin name.');
+      rl.close();
       process.exit(1);
     }
+    console.log(`\n📝 Generated plugin ID: "${pluginId}"`);
 
-    const author = await question('Author Name: ');
-    if (!author || author.trim() === '') {
-      console.error('❌ Author name is required.');
-      process.exit(1);
-    }
+    const author = await askWithValidation(
+      'Author Name: ',
+      (value) => {
+        if (!value || value.trim() === '') {
+          return { valid: false, error: 'Author name is required.' };
+        }
+        return { valid: true };
+      }
+    );
 
     const normalizedAuthor = normalizeAuthorName(author);
     console.log(`\n📝 Normalized author name: "${normalizedAuthor}"`);
 
-    const repository = await question('GitHub Repository URL: ');
-    if (!repository || !repository.startsWith('https://github.com/')) {
-      console.error('❌ Repository must be a valid GitHub URL.');
-      process.exit(1);
-    }
+    const repository = await askWithValidation(
+      'GitHub Repository URL: ',
+      (value) => {
+        if (!value || !value.startsWith('https://github.com/')) {
+          return { valid: false, error: 'Repository must be a valid GitHub URL (starting with https://github.com/).' };
+        }
+        return { valid: true };
+      }
+    );
 
-    const latestVersion = await question('Latest Version (semver, e.g., 1.0.0): ');
-    if (!latestVersion || !/^\d+\.\d+\.\d+/.test(latestVersion)) {
-      console.error('❌ Version must be in semver format (e.g., 1.0.0).');
-      process.exit(1);
-    }
+    const latestVersion = await askWithValidation(
+      'Latest Version (semver, e.g., 1.0.0): ',
+      (value) => {
+        if (!value || !/^\d+\.\d+\.\d+/.test(value)) {
+          return { valid: false, error: 'Version must be in semver format (e.g., 1.0.0).' };
+        }
+        return { valid: true };
+      }
+    );
 
-    const description = await question('Description (10-500 characters): ');
-    if (!description || description.length < 10 || description.length > 500) {
-      console.error('❌ Description must be 10-500 characters.');
-      process.exit(1);
-    }
+    const description = await askWithValidation(
+      'Description (10-500 characters): ',
+      (value) => {
+        if (!value || value.length < 10) {
+          return { valid: false, error: 'Description must be at least 10 characters.' };
+        }
+        if (value.length > 500) {
+          return { valid: false, error: 'Description must be max 500 characters.' };
+        }
+        return { valid: true };
+      }
+    );
 
     console.log('\n📋 Categories:');
     console.log('  1. integration');
@@ -106,23 +153,22 @@ async function createPlugin() {
     const homepage = await question('Homepage URL (optional, press Enter to skip): ') || repository;
     const icon = await question('Icon URL (optional, press Enter to skip): ') || '';
 
-    // Create directory structure
-    const authorDir = path.join(pluginsDir, normalizedAuthor);
-    const pluginDir = path.join(authorDir, pluginId);
+    // Hierarchical structure: plugins/{first-letter}/{author}/{plugin-id}/{version}/
+    const firstLetter = normalizedAuthor[0] || 'other';
+    const pluginDir = path.join(pluginsDir, firstLetter, normalizedAuthor, pluginId, latestVersion);
     const pluginJsonPath = path.join(pluginDir, 'plugin.json');
 
-    // Check if plugin already exists
     if (fs.existsSync(pluginJsonPath)) {
-      console.error(`❌ Plugin already exists at ${normalizedAuthor}/${pluginId}/`);
+      console.error(`\n❌ Plugin version already exists at ${firstLetter}/${normalizedAuthor}/${pluginId}/${latestVersion}/`);
+      console.error('   Please use a different version or plugin name.');
+      rl.close();
       process.exit(1);
     }
 
-    // Create directories
     fs.mkdirSync(pluginDir, { recursive: true });
 
-    // Create plugin.json
     const pluginJson = {
-      "$schema": "../../../registry.schema.json#/properties/plugins/items",
+      "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
       "id": pluginId,
       "name": pluginName,
       "author": author,
@@ -154,7 +200,7 @@ async function createPlugin() {
     );
 
     console.log('\n✅ Plugin entry created successfully!');
-    console.log(`\n📁 Location: plugins/${normalizedAuthor}/${pluginId}/plugin.json`);
+    console.log(`\n📁 Location: plugins/${firstLetter}/${normalizedAuthor}/${pluginId}/${latestVersion}/plugin.json`);
     console.log('\n📝 Next steps:');
     console.log('  1. Review the created plugin.json file');
     console.log('  2. Run: npm run validate-all');

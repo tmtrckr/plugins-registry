@@ -1,6 +1,14 @@
 # Time Tracker Plugins Registry
 
-Centralized registry for Time Tracker application plugins. This repository maintains a list of available plugins that can be discovered and installed through the Time Tracker Marketplace.
+[![GitHub license](https://img.shields.io/github/license/tmtrckr/plugins-registry)](LICENSE)
+[![Validate Registry](https://github.com/tmtrckr/plugins-registry/actions/workflows/validate-registry.yml/badge.svg)](https://github.com/tmtrckr/plugins-registry/actions)
+
+Community-driven registry for Time Tracker application plugins. This repository maintains a list of available plugins that can be discovered and installed through the Time Tracker Marketplace.
+
+## Statistics
+
+- **Total Plugins:** See [registry.json](registry.json) for current counts
+- **Registry:** [registry.json](registry.json) is built from `plugins/` and validated in CI
 
 ## Overview
 
@@ -15,35 +23,40 @@ The registry uses a **folder-based structure** where each plugin has its own dir
 
 ### Folder Structure
 
-Plugins are organized by author in `plugins/`:
+Plugins use a **hierarchical structure** partitioned by the first letter of the author name, then author, plugin id, and version:
 
 ```
 plugins/
-├── developer-name/                 # Author directory (normalized author name)
-│   ├── example-plugin/
-│   │   ├── plugin.json            # Plugin metadata
-│   │   ├── icon.png               # Optional: Plugin icon
-│   │   └── README.md              # Optional: Extended documentation
-│   └── another-plugin/
-│       └── plugin.json
-├── another-author/                 # Another author
-│   └── other-plugin/
-│       └── plugin.json
-└── [other-authors]/
-    └── [plugins]/
-        └── plugin.json
+├── d/                              # First letter of normalized author
+│   └── developer-name/
+│       └── example-plugin/
+│           ├── 1.0.0/
+│           │   ├── plugin.json     # Plugin metadata for this version
+│           │   └── README.md       # Optional
+│           └── 1.1.0/
+│               └── plugin.json
+├── j/
+│   └── john-doe/
+│       └── jira-integration/
+│           └── 1.0.0/
+│               └── plugin.json
+└── ...
 ```
 
-**Important**: 
-- Author directory name must match the normalized author name from `plugin.json` (lowercase, spaces replaced with hyphens, special characters removed)
-- Plugin directory name must match the `id` field in `plugin.json`
-- The `author` field in `plugin.json` is **required** and must match the author directory name when normalized
+**Path rule:** `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/plugin.json`
 
-The `registry.json` file is automatically generated from these individual plugin files using `npm run build`.
+**Important:**
+- **First letter** is the first character of the normalized author name (e.g. `developer-name` → `d`).
+- **Normalized author**: lowercase, spaces → hyphens, special characters removed.
+- **Plugin directory** name must match the `id` field in `plugin.json`.
+- **Version** directory must be semver (e.g. `1.0.0`). Multiple versions per plugin are supported.
+- The `author` field in `plugin.json` is **required** and must normalize to the author directory name.
+
+The `registry.json` file is built from these plugin files using `npm run build` (latest version per plugin is used).
 
 ### Plugin Metadata Schema
 
-Each plugin's `plugin.json` follows the schema defined in `registry.schema.json`. Each plugin entry includes:
+Each plugin's `plugin.json` follows the schema defined in `schemas/manifest.schema.json`. Each plugin entry includes:
 
 - **id**: Unique identifier (lowercase, alphanumeric with hyphens)
 - **name**: Display name
@@ -69,8 +82,8 @@ Each plugin's `plugin.json` follows the schema defined in `registry.schema.json`
 1. **Fork this repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/time-tracker-plugins-registry.git
-   cd time-tracker-plugins-registry
+   git clone https://github.com/your-username/plugins-registry.git
+   cd plugins-registry
    npm install
    ```
 3. **Use the interactive script** to create a plugin entry:
@@ -85,34 +98,26 @@ Each plugin's `plugin.json` follows the schema defined in `registry.schema.json`
 To add your plugin manually:
 
 1. **Fork this repository**
-2. **Determine your normalized author name**: Convert your author name to lowercase, replace spaces with hyphens, remove special characters
-   - Example: "John Doe" → "john-doe"
-   - Example: "My Company" → "my-company"
-3. **Create author directory** if it doesn't exist: `plugins/{normalized-author}/`
-4. **Create plugin directory** in the author directory: `plugins/{normalized-author}/{plugin-id}/`
-5. **Create `plugin.json`** in the plugin directory with your plugin metadata
+2. **Normalize author name**: lowercase, spaces → hyphens, remove special characters (e.g. "John Doe" → "john-doe")
+3. **First letter**: use the first character of the normalized author (e.g. "john-doe" → `j`)
+4. **Create path**: `plugins/{first-letter}/{normalized-author}/{plugin-id}/{version}/`
+   - Example: `plugins/j/john-doe/jira-integration/1.0.0/`
+5. **Create `plugin.json`** in that version directory with your plugin metadata
 6. **Ensure**:
-   - The `id` field matches the plugin directory name
-   - The `author` field matches the author directory name when normalized
-   - The `author` field is **required** and cannot be empty
-7. **Run `npm run build`** to regenerate `registry.json` (or let CI do it)
-8. **Submit a pull request** with:
-   - Author directory (if new)
-   - Plugin directory and `plugin.json` file
-   - Link to your GitHub repository
-   - Brief description
+   - `id` matches the plugin directory name (e.g. `jira-integration`)
+   - `author` matches the author directory when normalized (e.g. "John Doe" → "john-doe")
+   - `latest_version` or directory name is semver (e.g. `1.0.0`)
+7. **Run `npm run validate-all`** then submit a pull request
 
-**Example**: To add a plugin called "jira-integration" by author "John Doe":
-- Normalize author: "John Doe" → "john-doe"
-- Create `plugins/john-doe/jira-integration/plugin.json`
-- Set `"id": "jira-integration"` and `"author": "John Doe"` in the JSON file
-- The normalized author name "john-doe" must match the directory name
+**Example**: Plugin "jira-integration" by "John Doe", version 1.0.0:
+- Path: `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`
+- In `plugin.json`: `"id": "jira-integration"`, `"author": "John Doe"`, `"latest_version": "1.0.0"`
 
 ### Plugin Requirements
 
 - Plugin must be hosted on GitHub
 - Repository must have a `plugin.toml` manifest file
-- Plugin must follow the [Plugin Template](https://github.com/bthos/time-tracker-plugin-template) structure
+- Plugin must follow the [Plugin Template](https://github.com/tmtrckr/plugin-template) structure
 - Plugin must have at least one GitHub Release with compiled binaries
 
 ### Example Plugin Entry
@@ -122,15 +127,17 @@ For a plugin with author "Developer Name" and ID "example-plugin":
 **Directory structure:**
 ```
 plugins/
-  developer-name/          # Normalized author name
-    example-plugin/        # Plugin ID
-      plugin.json
+  d/                      # First letter of normalized author
+    developer-name/
+      example-plugin/     # Plugin ID
+        1.0.0/           # Version (semver)
+          plugin.json
 ```
 
 **plugin.json:**
 ```json
 {
-  "$schema": "../../../registry.schema.json#/properties/plugins/items",
+  "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",
   "id": "example-plugin",
   "name": "Example Plugin",
   "author": "Developer Name",
@@ -148,17 +155,17 @@ plugins/
 }
 ```
 
-**Note**: The `author` field "Developer Name" normalizes to "developer-name", which must match the author directory name.
+**Note**: The `author` field "Developer Name" normalizes to "developer-name"; the first letter is `d`, so the path is `plugins/d/developer-name/example-plugin/1.0.0/`.
 
 ## Registry Validation
 
-The registry is validated against `registry.schema.json` to ensure:
+The registry is validated against `schemas/registry.schema.json` (which references `schemas/manifest.schema.json` for plugin entries) and the hierarchical layout:
 
 - All required fields are present (including `author`)
 - Field formats are correct (URLs, versions, etc.)
 - No duplicate `{author}/{plugin-id}` combinations
-- Author directory name matches normalized author name from `plugin.json`
-- Plugin directory name matches `id` field in `plugin.json`
+- Path is `plugins/{letter}/{author}/{plugin-id}/{version}/` with semver version
+- Author and plugin directory names match normalized author and `id` from `plugin.json`
 - Repository URLs are valid GitHub repositories
 
 ## Verification Process
@@ -212,6 +219,12 @@ npm run build
 
 ### Validation
 
+Validate schema files (manifest + registry) against JSON Schema draft 2020-12:
+
+```bash
+npm run validate-schemas
+```
+
 Validate individual plugin files:
 
 ```bash
@@ -257,7 +270,15 @@ This will:
 
 ### Example Plugin Entry
 
-See `plugins/developer-name/example-plugin/plugin.json` for a complete example of a plugin entry.
+See `plugins/d/developer-name/example-plugin/1.0.0/plugin.json` for a complete example.
+
+## Documentation
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) – How to add a plugin and contribute
+- [SECURITY.md](SECURITY.md) – Security policy and reporting
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) – Community standards
+- [GOVERNANCE.md](GOVERNANCE.md) – Roles and decision making
+- [docs/COMMUNITY.md](docs/COMMUNITY.md) – GitHub Discussions and community channels
 
 ## Contributing
 
@@ -267,12 +288,13 @@ Contributions are welcome! Please:
 2. Ensure all URLs are valid
 3. Provide clear descriptions
 4. Use appropriate categories and tags
+5. Sign off commits (DCO): `git commit -s -m "message"`
 
 ### Ways to Contribute
 
-- **Add a Plugin**: Use `npm run create-plugin` or follow the [manual process](CONTRIBUTING.md)
-- **Request a Plugin**: Create an [issue using the plugin request template](.github/ISSUE_TEMPLATE/add-plugin.md)
-- **Report Issues**: Open an issue for bugs or improvements
+- **Add a Plugin**: Use `npm run create-plugin` or the [CLI](tools/cli) (`node tools/cli/src/index.js create`) or follow the [manual process](CONTRIBUTING.md)
+- **Request a Plugin**: Create an [issue using the plugin submission template](.github/ISSUE_TEMPLATE/plugin_submission.yml)
+- **Report Issues**: Open an issue for [bugs](.github/ISSUE_TEMPLATE/bug_report.yml) or [features](.github/ISSUE_TEMPLATE/feature_request.yml)
 - **Improve Documentation**: Submit PRs to improve docs
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
@@ -281,7 +303,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
 This registry is maintained by the Time Tracker community. Plugin entries are provided by plugin authors and are subject to their respective licenses.
 
+## Community
+
+- Use [GitHub Discussions](https://github.com/tmtrckr/plugins-registry/discussions) for questions and ideas (enable in repo Settings → Features if not yet available).
+- See [docs/COMMUNITY.md](docs/COMMUNITY.md) for maintainer setup and channels.
+
 ## Related Projects
 
-- [Time Tracker App](https://github.com/bthos/time-tracker-app) - Main application
-- [Plugin Template](https://github.com/bthos/time-tracker-plugin-template) - Template for creating plugins
+- [Time Tracker App](https://github.com/tmtrckr/time-tracker-app) - Main application
+- [Plugin Template](https://github.com/tmtrckr/plugin-template) - Template for creating plugins

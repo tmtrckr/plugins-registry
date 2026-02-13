@@ -1,0 +1,18 @@
+{
+  "name": "tmtrckr-plugin-cli",
+  "version": "1.0.0",
+  "description": "CLI for Time Tracker Plugins Registry",
+  "bin": {
+    "tmtrckr-registry": "./src/index.js"
+  },
+  "scripts": {
+    "validate": "node src/commands/validate.js",
+    "test-plugin": "node src/commands/test.js"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12"
+  }
+}

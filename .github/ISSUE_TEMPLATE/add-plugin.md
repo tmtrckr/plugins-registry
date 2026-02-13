@@ -34,7 +34,7 @@ assignees: ''
 
 ## Checklist
 
-- [ ] Plugin follows the [Plugin Template](https://github.com/bthos/time-tracker-plugin-template) structure
+- [ ] Plugin follows the [Plugin Template](https://github.com/tmtrckr/plugin-template) structure
 - [ ] Plugin has a `plugin.toml` manifest file
 - [ ] Plugin is hosted on GitHub
 - [ ] Plugin has at least one GitHub Release with compiled binaries
