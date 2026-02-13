@@ -39,5 +39,8 @@ jobs:
       - name: Check for duplicates
         run: npm run check-duplicates
 
-      - name: Build and validate registry
+      - name: Build registry
+        run: npm run build
+
+      - name: Validate registry
         run: npm run validate

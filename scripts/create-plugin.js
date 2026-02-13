@@ -203,10 +203,10 @@ async function createPlugin() {
     console.log(`\n📁 Location: plugins/${firstLetter}/${normalizedAuthor}/${pluginId}/${latestVersion}/plugin.json`);
     console.log('\n📝 Next steps:');
     console.log('  1. Review the created plugin.json file');
-    console.log('  2. Run: npm run validate-all');
-    console.log('  3. Run: npm run build');
-    console.log('  4. Commit and create a Pull Request');
+    console.log('  2. Run: npm run validate-plugins');
+    console.log('  3. Commit and create a Pull Request');
     console.log('\n💡 Tip: You can add icon.png, screenshot.png, or README.md to the plugin directory.');
+    console.log('   Note: CI will automatically build and validate the registry when you submit a PR.');
 
     rl.close();
   } catch (error) {
