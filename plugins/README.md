@@ -35,7 +35,8 @@ plugins/
 1. Normalize your author name and determine the first letter.
 2. Create `plugins/{letter}/{normalized-author}/{plugin-id}/{version}/`.
 3. Add `plugin.json` with `id`, `author`, `latest_version` (matching the version directory), and other required fields.
-4. Run `npm run validate-all` from the repository root.
+4. Validate your plugin: Run `npm run validate-plugins` from the repository root.
+   - CI will automatically build and validate the registry when you submit a PR
 
 ## Example
 

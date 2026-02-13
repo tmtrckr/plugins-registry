@@ -91,7 +91,12 @@ Each plugin's `plugin.json` follows the schema defined in `schemas/manifest.sche
    npm run create-plugin
    ```
    This will guide you through all required fields and create the correct structure automatically.
-4. **Commit and create a Pull Request** (see [CONTRIBUTING.md](CONTRIBUTING.md) for details)
+4. **Validate your plugin**:
+   ```bash
+   npm run validate-plugins
+   ```
+5. **Commit and create a Pull Request** (see [CONTRIBUTING.md](CONTRIBUTING.md) for details)
+   - CI will automatically build and validate the registry when you submit a PR
 
 ### Manual Process
 
@@ -107,7 +112,8 @@ To add your plugin manually:
    - `id` matches the plugin directory name (e.g. `jira-integration`)
    - `author` matches the author directory when normalized (e.g. "John Doe" → "john-doe")
    - `latest_version` or directory name is semver (e.g. `1.0.0`)
-7. **Run `npm run validate-all`** then submit a pull request
+7. **Validate your plugin**: Run `npm run validate-plugins` to check your plugin.json
+8. **Submit a pull request** (CI will automatically build and validate the registry)
 
 **Example**: Plugin "jira-integration" by "John Doe", version 1.0.0:
 - Path: `plugins/j/john-doe/jira-integration/1.0.0/plugin.json`
@@ -193,6 +199,8 @@ The Time Tracker application discovers plugins through:
 
 ## Local Development
 
+**Note**: This section covers commands for repository maintainers. Plugin contributors only need `npm run validate-plugins` to check their plugin.json - CI handles the rest automatically.
+
 ### Setup
 
 ```bash
@@ -211,15 +219,21 @@ This will guide you through all required fields and create the correct directory
 
 ### Building the Registry
 
+**Note**: Plugin contributors don't need to build the registry - CI does this automatically. The commands below are for repository maintainers.
+
 Build `registry.json` from individual plugin files:
 
 ```bash
 npm run build
 ```
 
+**Note**: The `build` script generates/updates `registry.json`. Use `npm run validate` to check an existing `registry.json` without modifying it.
+
 ### Validation
 
-Validate schema files (manifest + registry) against JSON Schema draft 2020-12:
+**For plugin contributors**: Run `npm run validate-plugins` to check your plugin.json file. CI will handle building and validating the registry automatically.
+
+**For repository maintainers**: Full validation commands:
 
 ```bash
 npm run validate-schemas
@@ -231,17 +245,19 @@ Validate individual plugin files:
 npm run validate-plugins
 ```
 
-Validate the aggregated registry (builds registry first):
+Validate the aggregated registry (requires registry.json to exist - run `npm run build` first):
 
 ```bash
 npm run validate
 ```
 
-Validate everything (plugins + registry):
+Validate everything (schemas, plugins, build registry, and validate registry):
 
 ```bash
 npm run validate-all
 ```
+
+This runs: `validate-schemas` → `validate-plugins` → `build` → `validate`
 
 Check for duplicate plugin IDs:
 
