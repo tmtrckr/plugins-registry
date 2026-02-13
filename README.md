@@ -312,13 +312,13 @@ Validate the aggregated registry (requires registry.json to exist - run `npm run
 npm run validate
 ```
 
-Validate existing files (schemas, plugins, and registry.json if present):
+Validate everything (schemas, plugins, and existing registry.json if present):
 
 ```bash
 npm run validate-files
 ```
 
-This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist). Note: This does not build the registry - run `npm run build` first if you need to generate registry.json.
+This runs: `validate-schemas` → `validate-plugins` → `validate` (skips registry validation if registry.json doesn't exist)
 
 Check for duplicate plugin IDs:
 

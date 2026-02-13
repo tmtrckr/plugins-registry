@@ -1,7 +1,7 @@
 {
   "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/registry.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-02-13T20:55:37.494Z",
+  "last_updated": "2026-02-13T20:30:19.826Z",
   "plugins": [
     {
       "$schema": "https://github.com/tmtrckr/plugins-registry/schemas/manifest.schema.json",

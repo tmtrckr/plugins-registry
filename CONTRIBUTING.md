@@ -27,20 +27,7 @@ git commit -s -m "Add plugin: your-plugin-name"
 
 This automatically adds `Signed-off-by: Your Name <your.email@example.com>` to your commit.
 
-**⚠️ Important:** 
-- All PRs are checked for DCO sign-off. Commits without sign-off will fail the DCO check.
-- **Email is required**: DCO requires a valid email address in the format `Name <email@example.com>`. The email must:
-  - Be a valid email format (you can't use just a username)
-  - Match your commit author email (the email Git uses when you commit)
-
-**Setting your Git email:**
-If you haven't set your Git email, configure it first:
-```bash
-git config --global user.email "your.email@example.com"
-git config --global user.name "Your Name"
-```
-
-Then commit with `-s` flag as shown above.
+**⚠️ Important:** All PRs are checked for DCO sign-off. Commits without sign-off will fail the DCO check.
 
 ## How to Add a Plugin
 
@@ -332,19 +319,6 @@ plugins/j/john-doe/my-plugin/
 ### Do I need to commit registry.json?
 
 **No!** Never commit `registry.json`. CI builds and commits it automatically after your PR is merged.
-
-### What email should I use for DCO sign-off?
-
-You can use any valid email address. The email in `Signed-off-by:` must:
-- Be a valid email format (e.g., `user@example.com`)
-- Match your Git commit author email
-
-**Common options:**
-- Your GitHub email (if you have it public)
-- Your personal email
-- Any valid email address you control
-
-**Important:** You cannot use just a username - a valid email address is required.
 
 ### How long does it take for my plugin to appear?
 
